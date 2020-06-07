@@ -3,7 +3,7 @@ if (!__addedDebugTools__) {
     (function () {
         if (!__addedDebugTools__) {
             var baseUrl;
-            var useGitHubUrl = false;
+            var useGitHubUrl = true;
             if (useGitHubUrl) {
                 baseUrl = 'https://yaustar.github.io/playcanvas-devtools/';
             } else {
