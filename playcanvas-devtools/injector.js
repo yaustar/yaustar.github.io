@@ -11,7 +11,8 @@ if (!__addedDebugTools__) {
             }
             
             var scriptFilenames = [
-                'playcanvas-extras.js'
+                'playcanvas-extras.js',
+                'dat.gui.min.js'
             ];
 
             var callback = function () {
@@ -20,6 +21,11 @@ if (!__addedDebugTools__) {
                 // Load the ministats
                 var app = pc.Application.getApplication();
                 var ministats = new pc.MiniStats(app);
+
+                // Load dat gui
+                var datgui = new dat.GUI();
+                var ministatsFolder = datgui.addFolder('Mini Stats');
+                ministatsFolder.add(ministats, 'enabled');
 
             };
 
