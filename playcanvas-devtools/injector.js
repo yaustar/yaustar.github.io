@@ -5,7 +5,7 @@ if (!__addedDebugTools__) {
             var baseUrl;
             var useGitHubUrl = false;
             if (useGitHubUrl) {
-                baseUrl = 'https://raw.githubusercontent.com/yaustar/playcanvas-devtools-injector/master/';
+                baseUrl = 'https://yaustar.github.io/playcanvas-devtools/';
             } else {
                 baseUrl = 'http://localhost:8080/';
             }
