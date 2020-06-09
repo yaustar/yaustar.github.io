@@ -80,7 +80,7 @@ if (!__addedDebugTools__) {
             dummyObj.picker.cameraDropdownController = null;
             dummyObj.picker.refreshActiveCameras = function() {
                 if (dummyObj.picker.cameraDropdownController) {
-                    datgui.remove(dummyObj.picker.cameraDropdownController);
+                    entityPickerFolder.remove(dummyObj.picker.cameraDropdownController);
                 }
 
                 var cameras = app.systems.camera.cameras;
