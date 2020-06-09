@@ -18,7 +18,7 @@ if (!__addedDebugTools__) {
             ];
 
             var app = pc.Application.getApplication();
-            var debugPhysicsFolder;
+            var debugPhysicsFolder, entityPickerFolder;
             var datgui;
 
             var dummyObj = {};
@@ -41,6 +41,7 @@ if (!__addedDebugTools__) {
                 debugPhysicsFolder.add(debugPhysics, 'castShadows');
             };
 
+
             dummyObj.printGraph = {};
             dummyObj.printGraph.filterString = '';
             dummyObj.printGraph.withFilter = function () {
@@ -62,6 +63,42 @@ if (!__addedDebugTools__) {
                 get: function() { return pcDevtools.printGraphPrintPaths; },
                 set: function(value) { pcDevtools.printGraphPrintPaths = value; }
             });
+
+
+            dummyObj.picker = {};
+
+            Object.defineProperty(dummyObj.picker, 'enabled', {
+                get: function() { return pcDevtools.enablePicker; },
+                set: function(value) { pcDevtools.enablePicker = value; }
+            });
+
+            Object.defineProperty(dummyObj.picker, 'camera', {
+                get: function() { return pcDevtools.pickerCameraPath; },
+                set: function(value) { pcDevtools.pickerCameraPath = value; }
+            });
+
+            dummyObj.picker.cameraDropdownController = null;
+            dummyObj.picker.refreshActiveCameras = function() {
+                if (dummyObj.picker.cameraDropdownController) {
+                    datgui.remove(dummyObj.picker.cameraDropdownController);
+                }
+
+                var cameras = app.systems.camera.cameras;
+                var cameraPaths = [];
+                var i;
+                for (i = 0; i < cameras.length; ++i) {
+                    var camera = cameras[i];
+                    if (camera.entity.enabled) {
+                        cameraPaths.push(pcDevtools.getPathToEntity(camera.entity));
+                    }
+                }
+
+                if (cameraPaths.length > 0) {
+                    dummyObj.picker.camera = cameraPaths[0];
+                }
+
+                dummyObj.picker.cameraDropdownController = entityPickerFolder.add(dummyObj.picker, 'camera', cameraPaths);
+            };
 
 
             var callback = function () {
@@ -87,8 +124,11 @@ if (!__addedDebugTools__) {
                 printGraphFolder.add(dummyObj.printGraph, 'enabledNodesOnly');
                 printGraphFolder.add(dummyObj.printGraph, 'printPaths');
 
-                var entityPickerFolder = datgui.addFolder('Entity Picker');
-                entityPickerFolder.add(pcDevtools, 'enablePicker');
+                entityPickerFolder = datgui.addFolder('Entity Picker');
+                entityPickerFolder.add(dummyObj.picker, 'enabled');
+                entityPickerFolder.add(dummyObj.picker, 'refreshActiveCameras');
+
+                dummyObj.picker.refreshActiveCameras();
             };
 
             var scriptsLoaded = 0;

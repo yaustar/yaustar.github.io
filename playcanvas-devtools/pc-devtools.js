@@ -15,7 +15,7 @@ pcDevtools.init = function () {
 
 pcDevtools.getPathToEntity = function (node) {
     var path = node.name;
-    while (node.parent) {
+    while (node.parent && node.parent !== pcDevtools.app.root) {
         path = node.parent.name + '/' + path;
         node = node.parent;
     }
@@ -24,7 +24,7 @@ pcDevtools.getPathToEntity = function (node) {
 };
 
 
-pcDevtools.printGraphEnabledNodesOnly = true;
+pcDevtools.printGraphEnabledNodesOnly = false;
 pcDevtools.printGraphPrintPaths = false;
 pcDevtools.printGraphWithFilter = function (node, path, filterString) {
     var i;
@@ -48,12 +48,13 @@ pcDevtools.printGraphWithFilter = function (node, path, filterString) {
         color = 'color: #7f8c8d';
     }
 
-    if (path.length > 0) {
-        path += '/';
+    if (path.length > 0 ) {
+        path += '/' + node.name;
+    } else if (node !== pcDevtools.app.root) {
+        path += node.name;
     }
-    path += node.name;
 
-    if (shouldPrint) {
+    if (shouldPrint && node !== pcDevtools.app.root) {
         var str = '%c' + indentStr + node.name;
         if (pcDevtools.printGraphPrintPaths) {
             str += ' [' + path + ']';
@@ -69,25 +70,14 @@ pcDevtools.printGraphWithFilter = function (node, path, filterString) {
 
 
 pcDevtools.enablePicker = false;
-
-pcDevtools.findFirstActiveCamera = function () {
-    var app = pcDevtools.app;
-    var cameras = app.systems.camera.cameras;
-    for (var i = 0; i < cameras.length; ++i) {
-        if (cameras[i].entity.enabled) {
-            return cameras[i];
-        }
-    }
-
-    return null;
-};
+pcDevtools.pickerCameraPath = "";
 
 pcDevtools.onPickerSelect = function (x, y) {
     if (pcDevtools.enablePicker) {
         var app = pcDevtools.app;
-        var camera = pcDevtools.findFirstActiveCamera();
+        var camera = app.root.findByPath(pcDevtools.pickerCameraPath).camera;
 
-        console.log('Camera used is: ' + pcDevtools.getPathToEntity(camera.entity));
+        console.log('Camera used is: ' + pcDevtools.pickerCameraPath);
 
         var canvas = app.graphicsDevice.canvas;
         var canvasWidth = parseInt(canvas.clientWidth, 10);
