@@ -53,6 +53,17 @@ if (!__addedDebugTools__) {
                 pcDevtools.printGraphWithFilter(app.root, '', 'node instanceof pc.Entity');
             };
 
+            Object.defineProperty(dummyObj.printGraph, 'enabledNodesOnly', {
+                get: function() { return pcDevtools.printGraphEnabledNodesOnly; },
+                set: function(value) { pcDevtools.printGraphEnabledNodesOnly = value; }
+            });
+
+            Object.defineProperty(dummyObj.printGraph, 'printPaths', {
+                get: function() { return pcDevtools.printGraphPrintPaths; },
+                set: function(value) { pcDevtools.printGraphPrintPaths = value; }
+            });
+
+
             var callback = function () {
                 console.log('All PlayCanvas Debug Tool scripts loaded');
 
@@ -73,6 +84,8 @@ if (!__addedDebugTools__) {
                 printGraphFolder.add(dummyObj.printGraph, 'filterString');
                 printGraphFolder.add(dummyObj.printGraph, 'withFilter');
                 printGraphFolder.add(dummyObj.printGraph, 'entitiesOnly');
+                printGraphFolder.add(dummyObj.printGraph, 'enabledNodesOnly');
+                printGraphFolder.add(dummyObj.printGraph, 'printPaths');
 
                 var entityPickerFolder = datgui.addFolder('Entity Picker');
                 entityPickerFolder.add(pcDevtools, 'enablePicker');

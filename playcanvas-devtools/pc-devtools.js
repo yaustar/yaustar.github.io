@@ -13,7 +13,6 @@ pcDevtools.init = function () {
     }
 };
 
-
 pcDevtools.getPathToEntity = function (node) {
     var path = node.name;
     while (node.parent) {
@@ -25,6 +24,8 @@ pcDevtools.getPathToEntity = function (node) {
 };
 
 
+pcDevtools.printGraphEnabledNodesOnly = true;
+pcDevtools.printGraphPrintPaths = false;
 pcDevtools.printGraphWithFilter = function (node, path, filterString) {
     var i;
     var indentStr = "";
@@ -38,13 +39,26 @@ pcDevtools.printGraphWithFilter = function (node, path, filterString) {
         shouldPrint = eval(filterString);
     }
 
+    // Make the text grey if it is disabled
+    var color = '';
+    if (!node.enabled) {
+        if (pcDevtools.printGraphOnlyEnabled) {
+            shouldPrint = false;
+        }
+        color = 'color: #7f8c8d';
+    }
+
     if (path.length > 0) {
         path += '/';
     }
     path += node.name;
 
     if (shouldPrint) {
-        console.log(indentStr + node.name + ' [' + path + ']');
+        var str = '%c' + indentStr + node.name;
+        if (pcDevtools.printGraphPrintPaths) {
+            str += ' [' + path + ']';
+        }
+        console.log(str, color);
     }
 
     var children = node.children;
@@ -142,4 +156,4 @@ pcDevtools.addScriptTypeToDebugEntity = function (scriptName, data) {
     }
 
     return scriptInstance;
-}
+};
