@@ -9,7 +9,6 @@ if (!__addedDebugTools__) {
             } else {
                 baseUrl = 'http://localhost:8080/';
             }
-            
 
             var scriptFilenames = [
                 'dat.gui.min.js',
@@ -29,7 +28,7 @@ if (!__addedDebugTools__) {
                 }
 
                 // Add the physics debugger
-                var debugPhysics = pcDevtools.addScriptTypeToDebugEntity(app,'debugPhysics', {
+                var debugPhysics = pcDevtools.addScriptTypeToDebugEntity('debugPhysics', {
                     drawShapes: false,
                     opacity: 0.5,
                     castShadows: false
@@ -57,6 +56,8 @@ if (!__addedDebugTools__) {
             var callback = function () {
                 console.log('All PlayCanvas Debug Tool scripts loaded');
 
+                pcDevtools.init();
+
                 // Load the ministats
                 var ministats = new pc.MiniStats(app);
 
@@ -72,6 +73,9 @@ if (!__addedDebugTools__) {
                 printGraphFolder.add(dummyObj.printGraph, 'filterString');
                 printGraphFolder.add(dummyObj.printGraph, 'withFilter');
                 printGraphFolder.add(dummyObj.printGraph, 'entitiesOnly');
+
+                var entityPickerFolder = datgui.addFolder('Entity Picker');
+                entityPickerFolder.add(pcDevtools, 'enablePicker');
             };
 
             var scriptsLoaded = 0;
