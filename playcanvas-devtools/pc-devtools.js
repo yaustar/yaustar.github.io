@@ -13,10 +13,9 @@ pcDevtools.init = function () {
     }
 };
 
-
 pcDevtools.getPathToEntity = function (node) {
     var path = node.name;
-    while (node.parent) {
+    while (node.parent && node.parent !== pcDevtools.app.root) {
         path = node.parent.name + '/' + path;
         node = node.parent;
     }
@@ -25,7 +24,9 @@ pcDevtools.getPathToEntity = function (node) {
 };
 
 
-pcDevtools.printGraphWithFilter = function (node, filterString) {
+pcDevtools.printGraphEnabledNodesOnly = false;
+pcDevtools.printGraphPrintPaths = false;
+pcDevtools.printGraphWithFilter = function (node, path, filterString) {
     var i;
     var indentStr = "";
 
@@ -38,35 +39,45 @@ pcDevtools.printGraphWithFilter = function (node, filterString) {
         shouldPrint = eval(filterString);
     }
 
-    if (shouldPrint) {
-        console.log(indentStr + node.name);
+    // Make the text grey if it is disabled
+    var color = '';
+    if (!node.enabled) {
+        if (pcDevtools.printGraphOnlyEnabled) {
+            shouldPrint = false;
+        }
+        color = 'color: #7f8c8d';
+    }
+
+    if (path.length > 0 ) {
+        path += '/' + node.name;
+    } else if (node !== pcDevtools.app.root) {
+        path += node.name;
+    }
+
+    if (shouldPrint && node !== pcDevtools.app.root) {
+        var str = '%c' + indentStr + node.name;
+        if (pcDevtools.printGraphPrintPaths) {
+            str += ' [' + path + ']';
+        }
+        console.log(str, color);
     }
 
     var children = node.children;
     for (i = 0; i < children.length; ++i) {
-        pcDevtools.printGraphWithFilter(children[i], filterString);
+        pcDevtools.printGraphWithFilter(children[i], path, filterString);
     }
 };
 
 
 pcDevtools.enablePicker = false;
-
-pcDevtools.findFirstActiveCamera = function () {
-    var app = pcDevtools.app;
-    var cameras = app.systems.camera.cameras;
-    if (cameras.length > 0) {
-        return cameras[0];
-    }
-
-    return null;
-};
+pcDevtools.pickerCameraPath = "";
 
 pcDevtools.onPickerSelect = function (x, y) {
     if (pcDevtools.enablePicker) {
         var app = pcDevtools.app;
-        var camera = pcDevtools.findFirstActiveCamera();
+        var camera = app.root.findByPath(pcDevtools.pickerCameraPath).camera;
 
-        console.log('Camera used is: ' + pcDevtools.getPathToEntity(camera.entity));
+        console.log('Camera used is: ' + pcDevtools.pickerCameraPath);
 
         var canvas = app.graphicsDevice.canvas;
         var canvasWidth = parseInt(canvas.clientWidth, 10);
@@ -86,7 +97,7 @@ pcDevtools.onPickerSelect = function (x, y) {
 
         if (selected.length > 0) {
             // Get the graph node used by the selected mesh instance
-            var entity = selected[0].node;
+            var entity = selected[0] ? selected[0].node : null;
 
             // Bubble up the hierarchy until we find an actual Entity
             while (!(entity instanceof pc.Entity) && entity !== null) {
@@ -135,4 +146,4 @@ pcDevtools.addScriptTypeToDebugEntity = function (scriptName, data) {
     }
 
     return scriptInstance;
-}
+};
