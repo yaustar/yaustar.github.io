@@ -25,7 +25,7 @@ pcDevtools.getPathToEntity = function (node) {
 };
 
 
-pcDevtools.printGraphWithFilter = function (node, filterString) {
+pcDevtools.printGraphWithFilter = function (node, path, filterString) {
     var i;
     var indentStr = "";
 
@@ -38,13 +38,18 @@ pcDevtools.printGraphWithFilter = function (node, filterString) {
         shouldPrint = eval(filterString);
     }
 
+    if (path.length > 0) {
+        path += '/';
+    }
+    path += node.name;
+
     if (shouldPrint) {
-        console.log(indentStr + node.name);
+        console.log(indentStr + node.name + ' [' + path + ']');
     }
 
     var children = node.children;
     for (i = 0; i < children.length; ++i) {
-        pcDevtools.printGraphWithFilter(children[i], filterString);
+        pcDevtools.printGraphWithFilter(children[i], path, filterString);
     }
 };
 
@@ -54,8 +59,10 @@ pcDevtools.enablePicker = false;
 pcDevtools.findFirstActiveCamera = function () {
     var app = pcDevtools.app;
     var cameras = app.systems.camera.cameras;
-    if (cameras.length > 0) {
-        return cameras[0];
+    for (var i = 0; i < cameras.length; ++i) {
+        if (cameras[i].entity.enabled) {
+            return cameras[i];
+        }
     }
 
     return null;
@@ -86,7 +93,7 @@ pcDevtools.onPickerSelect = function (x, y) {
 
         if (selected.length > 0) {
             // Get the graph node used by the selected mesh instance
-            var entity = selected[0].node;
+            var entity = selected[0] ? selected[0].node : null;
 
             // Bubble up the hierarchy until we find an actual Entity
             while (!(entity instanceof pc.Entity) && entity !== null) {

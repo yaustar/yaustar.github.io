@@ -45,12 +45,12 @@ if (!__addedDebugTools__) {
             dummyObj.printGraph.filterString = '';
             dummyObj.printGraph.withFilter = function () {
                 console.log('\n=== Print Graph with filter ' + dummyObj.printGraph.filterString + ' ===');
-                pcDevtools.printGraphWithFilter(app.root, dummyObj.printGraph.filterString);
+                pcDevtools.printGraphWithFilter(app.root, '', dummyObj.printGraph.filterString);
             };
 
             dummyObj.printGraph.entitiesOnly = function () {
                 console.log('\n=== Print Graph entities only ===');
-                pcDevtools.printGraphWithFilter(app.root, 'node instanceof pc.Entity');
+                pcDevtools.printGraphWithFilter(app.root, '', 'node instanceof pc.Entity');
             };
 
             var callback = function () {
