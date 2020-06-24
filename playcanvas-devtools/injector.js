@@ -3,11 +3,13 @@ if (!__addedDebugTools__) {
     (function () {
         if (!__addedDebugTools__) {
             var baseUrl;
-            var useGitHubUrl = true;
-            if (useGitHubUrl) {
-                baseUrl = 'https://yaustar.github.io/playcanvas-devtools/';
-            } else {
+            var useLocalHost = window.__pcdevtools__ == 'localhost';
+            if (useLocalHost) {
                 baseUrl = 'http://localhost:8080/';
+                console.log('Using locahost');
+            } else {
+                baseUrl = 'https://yaustar.github.io/playcanvas-devtools/';
+                console.log('Using @yaustar GitHub');
             }
 
             var scriptFilenames = [
