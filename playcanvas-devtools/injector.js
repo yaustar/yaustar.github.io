@@ -43,27 +43,27 @@ if (!__addedDebugTools__) {
                 debugPhysicsFolder.add(debugPhysics, 'castShadows');
             };
 
-
+            // Add scene graph printer
             dummyObj.printGraph = {};
             dummyObj.printGraph.filterString = '';
             dummyObj.printGraph.withFilter = function () {
                 console.log('\n=== Print Graph with filter ' + dummyObj.printGraph.filterString + ' ===');
-                pcDevtools.printGraphWithFilter(app.root, '', dummyObj.printGraph.filterString);
+                pcDevtools.graphPrinter.withFilter(app.root, '', dummyObj.printGraph.filterString);
             };
 
             dummyObj.printGraph.entitiesOnly = function () {
                 console.log('\n=== Print Graph entities only ===');
-                pcDevtools.printGraphWithFilter(app.root, '', 'node instanceof pc.Entity');
+                pcDevtools.graphPrinter.withFilter(app.root, '', 'node instanceof pc.Entity');
             };
 
             Object.defineProperty(dummyObj.printGraph, 'enabledNodesOnly', {
-                get: function() { return pcDevtools.printGraphEnabledNodesOnly; },
-                set: function(value) { pcDevtools.printGraphEnabledNodesOnly = value; }
+                get: function() { return pcDevtools.graphPrinter.enabledNodesOnly; },
+                set: function(value) { pcDevtools.graphPrinter.enabledNodesOnly = value; }
             });
 
             Object.defineProperty(dummyObj.printGraph, 'printPaths', {
-                get: function() { return pcDevtools.printGraphPrintPaths; },
-                set: function(value) { pcDevtools.printGraphPrintPaths = value; }
+                get: function() { return pcDevtools.graphPrinter.showPaths; },
+                set: function(value) { pcDevtools.graphPrinter.showPaths = value; }
             });
 
 

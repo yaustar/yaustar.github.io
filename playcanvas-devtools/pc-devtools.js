@@ -24,9 +24,12 @@ pcDevtools.getPathToEntity = function (node) {
 };
 
 
-pcDevtools.printGraphEnabledNodesOnly = false;
-pcDevtools.printGraphPrintPaths = false;
-pcDevtools.printGraphWithFilter = function (node, path, filterString) {
+pcDevtools.graphPrinter = {};
+
+pcDevtools.graphPrinter.enabledNodesOnly = false;
+pcDevtools.graphPrinter.showPaths = false;
+
+pcDevtools.graphPrinter.withFilter = function (node, path, filterString) {
     var i;
     var indentStr = "";
 
@@ -64,7 +67,7 @@ pcDevtools.printGraphWithFilter = function (node, path, filterString) {
 
     var children = node.children;
     for (i = 0; i < children.length; ++i) {
-        pcDevtools.printGraphWithFilter(children[i], path, filterString);
+        this.withFilter(children[i], path, filterString);
     }
 };
 
