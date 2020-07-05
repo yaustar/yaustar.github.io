@@ -3,62 +3,134 @@ if (!__addedDebugTools__) {
     (function () {
         if (!__addedDebugTools__) {
             var baseUrl;
-            var useGitHubUrl = false;
-            if (useGitHubUrl) {
-                baseUrl = 'https://yaustar.github.io/playcanvas-devtools/';
-            } else {
+            var useLocalHost = window.__pcdevtools__ == 'localhost';
+            if (useLocalHost) {
                 baseUrl = 'http://localhost:8080/';
+                console.log('Using locahost');
+            } else {
+                baseUrl = 'https://yaustar.github.io/playcanvas-devtools/';
+                console.log('Using @yaustar GitHub');
             }
-            
+
             var scriptFilenames = [
                 'dat.gui.min.js',
                 'playcanvas-extras.js',
-                'debug-physics.js'
+                'debug-physics.js',
+                'pc-devtools.js'
             ];
 
             var app = pc.Application.getApplication();
-            var debugEntityName = '__devtools__';
+            var debugPhysicsFolder, entityPickerFolder;
+            var datgui;
 
-            var addScriptTypeToDebugEntity = function (scriptName, data) {
-                var debugEntity = app.root.findByName(debugEntityName);
-                if (!debugEntity) {
-                    debugEntity = new pc.Entity();
-                    debugEntity.addComponent('script');
-                    app.root.addChild(debugEntity);
+            var dummyObj = {};
+            dummyObj.addPhysicsDebugger = function () {
+                if (debugPhysicsFolder) {
+                    datgui.removeFolder(debugPhysicsFolder);
                 }
 
-                var scriptInstance = debugEntity.script[scriptName];
-                if (!scriptInstance) {
-                    scriptInstance = debugEntity.script.create(scriptName, {
-                        attributes: data
-                    });
+                // Add the physics debugger
+                var debugPhysics = pcDevtools.addScriptTypeToDebugEntity('debugPhysics', {
+                    drawShapes: false,
+                    opacity: 0.5,
+                    castShadows: false
+                });
+
+                debugPhysicsFolder = datgui.addFolder('Physics');
+                debugPhysicsFolder.add(dummyObj, 'addPhysicsDebugger');
+                debugPhysicsFolder.add(debugPhysics, 'drawShapes');
+                debugPhysicsFolder.add(debugPhysics, 'opacity', 0, 1);
+                debugPhysicsFolder.add(debugPhysics, 'castShadows');
+            };
+
+            // Add scene graph printer
+            dummyObj.printGraph = {};
+            dummyObj.printGraph.filterString = '';
+            dummyObj.printGraph.withFilter = function () {
+                console.log('\n=== Print Graph with filter ' + dummyObj.printGraph.filterString + ' ===');
+                pcDevtools.graphPrinter.withFilter(app.root, '', dummyObj.printGraph.filterString);
+            };
+
+            dummyObj.printGraph.entitiesOnly = function () {
+                console.log('\n=== Print Graph entities only ===');
+                pcDevtools.graphPrinter.withFilter(app.root, '', 'node instanceof pc.Entity');
+            };
+
+            Object.defineProperty(dummyObj.printGraph, 'enabledNodesOnly', {
+                get: function() { return pcDevtools.graphPrinter.enabledNodesOnly; },
+                set: function(value) { pcDevtools.graphPrinter.enabledNodesOnly = value; }
+            });
+
+            Object.defineProperty(dummyObj.printGraph, 'printPaths', {
+                get: function() { return pcDevtools.graphPrinter.showPaths; },
+                set: function(value) { pcDevtools.graphPrinter.showPaths = value; }
+            });
+
+
+            dummyObj.picker = {};
+
+            Object.defineProperty(dummyObj.picker, 'enabled', {
+                get: function() { return pcDevtools.enablePicker; },
+                set: function(value) { pcDevtools.enablePicker = value; }
+            });
+
+            Object.defineProperty(dummyObj.picker, 'camera', {
+                get: function() { return pcDevtools.pickerCameraPath; },
+                set: function(value) { pcDevtools.pickerCameraPath = value; }
+            });
+
+            dummyObj.picker.cameraDropdownController = null;
+            dummyObj.picker.refreshActiveCameras = function() {
+                if (dummyObj.picker.cameraDropdownController) {
+                    entityPickerFolder.remove(dummyObj.picker.cameraDropdownController);
                 }
 
-                return scriptInstance;
-            }
+                var cameras = app.systems.camera.cameras;
+                var cameraPaths = [];
+                var i;
+                for (i = 0; i < cameras.length; ++i) {
+                    var camera = cameras[i];
+                    if (camera.entity.enabled) {
+                        cameraPaths.push(pcDevtools.getPathToEntity(camera.entity));
+                    }
+                }
+
+                if (cameraPaths.length > 0) {
+                    dummyObj.picker.camera = cameraPaths[0];
+                }
+
+                dummyObj.picker.cameraDropdownController = entityPickerFolder.add(dummyObj.picker, 'camera', cameraPaths);
+            };
+
 
             var callback = function () {
                 console.log('All PlayCanvas Debug Tool scripts loaded');
+
+                pcDevtools.init();
 
                 // Load the ministats
                 var ministats = new pc.MiniStats(app);
 
                 // Load dat gui
-                var datgui = new dat.GUI();
+                datgui = new dat.GUI();
                 var ministatsFolder = datgui.addFolder('Mini Stats');
                 ministatsFolder.add(ministats, 'enabled');
 
-                // Add the physics debugger
-                var debugPhysics = addScriptTypeToDebugEntity('debugPhysics', {
-                    drawShapes: false,
-                    opacity: 0.5,
-                    castShadows: false              
-                });
+                debugPhysicsFolder = datgui.addFolder('Physics');
+                debugPhysicsFolder.add(dummyObj, 'addPhysicsDebugger');
 
-                var debugPhysicsFolder = datgui.addFolder('Physics');
-                debugPhysicsFolder.add(debugPhysics, 'drawShapes');
-                debugPhysicsFolder.add(debugPhysics, 'opacity', 0, 1);
-                debugPhysicsFolder.add(debugPhysics, 'castShadows');
+                var printGraphFolder = datgui.addFolder('Print Graph');
+                printGraphFolder.add(dummyObj.printGraph, 'filterString');
+                printGraphFolder.add(dummyObj.printGraph, 'withFilter');
+                printGraphFolder.add(dummyObj.printGraph, 'entitiesOnly');
+                printGraphFolder.add(dummyObj.printGraph, 'enabledNodesOnly');
+                printGraphFolder.add(dummyObj.printGraph, 'printPaths');
+
+                entityPickerFolder = datgui.addFolder('Entity Picker');
+                entityPickerFolder.add(dummyObj.picker, 'enabled');
+                entityPickerFolder.add(dummyObj.picker, 'refreshActiveCameras');
+
+                dummyObj.picker.refreshActiveCameras();
             };
 
             var scriptsLoaded = 0;
