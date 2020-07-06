@@ -59,7 +59,7 @@ pcDevtools.graphPrinter.withFilter = function (node, path, filterString) {
 
     if (shouldPrint && node !== pcDevtools.app.root) {
         var str = '%c' + indentStr + node.name;
-        if (pcDevtools.printGraphPrintPaths) {
+        if (this.showPaths) {
             str += ' [' + path + ']';
         }
         console.log(str, color);
