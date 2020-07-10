@@ -1,0 +1,1 @@
+var webXrPolyfill = new WebXRPolyfill();
