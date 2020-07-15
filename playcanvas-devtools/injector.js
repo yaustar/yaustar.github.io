@@ -3,10 +3,9 @@ if (!__addedDebugTools__) {
     (function () {
         if (!__addedDebugTools__) {
             var baseUrl;
-            var useLocalHost = window.__pcdevtools__ == 'localhost';
-            if (useLocalHost) {
-                baseUrl = 'http://localhost:8080/';
-                console.log('Using locahost');
+            if (window.__overrideurl__) {
+                baseUrl = window.__overrideurl__;
+                console.log('Using url override ' + baseUrl);
             } else {
                 baseUrl = 'https://yaustar.github.io/playcanvas-devtools/';
                 console.log('Using @yaustar GitHub');
