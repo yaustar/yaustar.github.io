@@ -1,4 +1,4 @@
-var DebugPhysics = pc.createScript('debugPhysics');
+var DebugPhysics = pc.createScript('__debugPhysics__');
 
 DebugPhysics.attributes.add('drawShapes', {
     type: 'boolean',
