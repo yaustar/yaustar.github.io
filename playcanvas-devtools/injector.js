@@ -30,7 +30,7 @@ if (!__addedDebugTools__) {
 
                 // Add the physics debugger
                 var debugPhysics = pcDevtools.addScriptTypeToDebugEntity('__debugPhysics__', {
-                    drawShapes: false,
+                    drawShapes: true,
                     opacity: 0.5,
                     castShadows: false
                 });
