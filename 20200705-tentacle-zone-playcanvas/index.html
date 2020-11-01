@@ -37,60 +37,108 @@
 						* XR and Slots mixed in between 😬
 
 					Note:
-					Shhh, these are your private notes
+					Hi! Thank you for coming. My name is Steven and I'm a PlayCanvas Support Engineer at Snap, which means that I'm the first line support to our game development partners. This can range from helping with certain features of the engine, best practises and help with optimising their game for the platform. Eg Load times, frame rates etc, scene layouts.
+
+					My background is a more of a traditional gameplay programmer, I've worked on console at EA with the Harry Potter movie titles, facebook games at Playfish (if you ever got an unwanted FB notification spam from Resturant City or Sims Social, I'm really sorry) and mobile at King.
+
+					With this presentation, I would like to show what the browser is capable of as a 'platform' and some of the oppotunities that it can provide even if the web is not your main target.
+
+					Some of it will be known to you already but I hope to show at least one new thing to everyone. 😁
 					</textarea>
 				</section>
-				
-				<section data-autoslide="1500">
-					<h2>What is PlayCanvas</h2>
-				</section>
 
-				<section data-background-iframe="https://playcanv.as/e/p/MflWvdTW/">
-				</section>
-
-				<section data-background="files/playcanvas-editor.jpg" data-background-size="contain">
-				</section>
-				
 				<section>
+					<section data-autoslide="1500">
+						<h2>What is PlayCanvas</h2>
+					</section>
+
+					<section data-background-iframe="https://playcanv.as/e/p/MflWvdTW/">
+						<aside class="notes">
+						A quick intro of PlayCanvas: In a nutshell, PlayCanvas is a WebGL, open source games engine with a cloud based development platform that can run directly in the browser. Within a few clicks and no installs, users can create, iterate and publish a game all directly from the browser.
+
+						This is one of our showcase projects. Seemore that was originally developed with ARM and has been updated a few times to take advantage of new engine features. Some of the features shown here:
+						HDR lightmaps
+						Hardware supported texture compression
+						Draw call batching
+						Asynchronous streaming of assets to allow for fast startup
+						</aside>
+					</section>
+
+					<section data-background="files/playcanvas-editor.jpg" data-background-size="contain">
+						<aside class="notes">
+							Here's a screenshot of the Scene Editor which will be familar to most people. I will be a giving a small demo at the end that goes through the workflow of creating a project and publishing so stay tuned for that.
+						</aside>
+					</section>
+
+					<section data-background="files/playcanvas features.jpg" data-background-size="contain">
+					</section>
+
 					<section data-markdown>
 						<textarea data-template>
-						## More Demos
-						</textarea>
-					</section>
-					
-					<section data-background-iframe="https://robostorm.io/" data-background-interactive>
-					</section>
-
-					<section data-background-iframe="https://playcanv.as/e/p/JERg21J8/" data-background-interactive>
-					</section>
-
-					<section data-background-iframe="https://rzr.polaris.com/en-us/rzr-rs1/build-color/?selectedmodel=1-seat" data-background-interactive>
-					</section>
-
-					<section data-markdown>
-						<textarea data-template>
-						## And the rest
+						## More demos
 						[https://github.com/playcanvas/awesome-playcanvas](https://github.com/playcanvas/awesome-playcanvas)
 						</textarea>
 					</section>
 				</section>
 
 				<section>
-					<!-- <h2>The head turning point for me</h2> -->
-					<iframe src="https://giphy.com/embed/VGQ1FHrvq24Ny" width="480" height="294" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/gina-rodriguez-ginarodriguezedit-grodriguezedit-VGQ1FHrvq24Ny">via GIPHY</a></p>
+					<section>
+						<h2>The browser can do what now?</h2>
+						<iframe src="https://giphy.com/embed/VGQ1FHrvq24Ny" width="480" height="294" frameBorder="0"
+							class="giphy-embed" allowFullScreen></iframe>
+						<p>
+							<a href="https://giphy.com/gifs/gina-rodriguez-ginarodriguezedit-grodriguezedit-VGQ1FHrvq24Ny">via GIPHY</a>
+						</p>
+
+						<aside class="notes">
+							The capabilities of browser actually snuck up on me despite working on Flash games with PlayFish at the time. I thought Flash was pretty safe as you effectively wrote one and it worked 'everywhere'.
+						</aside>
+					</section>
+
+					<section data-background-iframe="https://www.youtube.com/embed/IMBg75_TiLw?start=29">
+						<aside class="notes">
+							I was used to seeing and expecting 2D games like this in the browser. 3D games were very rare and usually expiremental.
+						</aside>
+					</section>
+
+					<section data-background-iframe="https://www.youtube.com/embed/vRsDeOkVyv8?start=3309">
+						<aside class="notes">
+							It wasn't until this presentation in 2016 by PlayCanvas that I actually sat up and took notice. Will did a WebVR demo where was able to create and publish a build in front of us that we could try almost immediately.
+
+							The individual components weren't anything new but the combination and that the build was running 3D graphics on a mobile, was hugely impressive to me. It wasn't something I previous thought was possible and it was like being given a whole new toolset all at once.
+						</aside>
+					</section>
 				</section>
 
 				<section>
 					<section data-markdown>
 						<textarea data-template>
-						## Current state of browser experiences
+						## What can we do now?
+
+						Notes:
+						So what can we do now?
 						</textarea>
 					</section>
 
-					<section data-markdown>
-						<textarea data-template>
-						## Game portals
-						</textarea>
+					<section>
+						<h2>Game Portals</h2>
+						<img src="files/miniclip.jpg" width=400/> <img src="files/armor games.jpg" width=400/>
+						<img src="files/newgrounds.jpg" width=400/> <img src="files/y8.jpg" width=400/>
+						<img src="files/crazy games.jpg" width=400/> <img src="files/cbbcgames.jpg" width=400/>
+
+						<aside class="notes">
+							Web game portals are still going but are adapting to the times. Miniclip still have 70 million users per month on their site and are now a mobile publisher for mobile titles. A lot of these portals have been around since the Flash days (even when I was at Uni).
+
+							At the moment, ad revenue is still the prime source of income for portals. While there has been some movement on Web Monetisation (see Coil), that still feels a way off to being the standard.
+
+							Some portals have not been as lucky. Kongregate have started to wind down their games services and have stopped accepting new games from third party developers.
+						</aside>
+					</section>
+
+					<section data-background-iframe="https://robostorm.io/" data-background-interactive>
+						<aside class="notes">
+							Here's a title from one our users of PlayCanvas. Team deathmatch with mechs.
+						</aside>
 					</section>
 
 					<section data-markdown>
@@ -99,10 +147,49 @@
 						</textarea>
 					</section>
 
+					<section data-background-iframe="https://deck.gl/examples/hexagon-layer/">
+						<aside class="notes">
+							WebGL has been used to help accelrate the visiualisation of data. This is a demo of from deck.gl, a WebGL visualistion library for large scle datasets. That spike in London does concern me a bit 😅
+						</aside>
+					</section>
+
+					<section data-background-iframe="https://playcanv.as/p/ZV4PW6wr/">
+						<aside class="notes">
+							Many of our clients are from or are working for companies that would like realistic visualisation of their products. This example makes use of baked lightmaps and post processing to achieve that look.
+						</aside>
+					</section>
+
+					<section data-background-iframe="https://rzr.polaris.com/en-us/rzr-rs1/build-color/?selectedmodel=1-seat" data-background-interactive>
+						<aside class="notes">
+							And this also extends to configurators. Vehicles, interior design, etc. This one is from Polaris.
+						</aside>
+					</section>
+
 					<section data-markdown>
 						<textarea data-template>
-						## Playable ads
+						## Interactive ads
 						</textarea>
+					</section>
+
+					<section data-background-iframe="https://playcanv.as/p/XPWoTZ4F/">
+						<aside class="notes">
+							Interactive and playable ads is something that is becoming more popular over the last few years. Companies are using ads as a way to engage the user and get some 'buy in'. Especially if there is some sort of prize at the end such as a voucher.
+
+							This is an older project for Call of Duty and allows the user to configure their favourite setup. This could be extended to be shared amongst frieds/social media which is promotion for the game.
+						</aside>
+					</section>
+
+					<section>
+						<a href="https://www.ironsrc.com/case-studies/stack-ball-3d/" target="_blank"><img src="files/ironsource ad.jpg" /></a>
+						<a href="https://www.facebook.com/business/success/2-mytona-nanigans" target="_blank"><img src="files/facebook ad.jpg" /></a>
+
+						<aside class="notes">
+							Playable ads (typically served in mobile games as a web view) are used to drive UA by giving players the ability to sample some gameplay. In these examples above, Azur Games got a 60% increase of installs per 1000 ad impression compared to video.
+
+							MyTona and their hidden object game, got a 4.6 multiple increase of click through rate than video ads (show video from site).
+
+							The web allows developers to close the gap between players seeing something they are interested in and being able to engage with it. This has become even more important as games are now competing against other streaming services like Netflix, YouTube, Spotify for user attention.
+						</aside>
 					</section>
 
 					<section data-markdown>
@@ -111,10 +198,58 @@
 						</textarea>
 					</section>
 
+					<section>
+						<img src="files/fb instant games.jpg" width=200/>
+						<img src="files/wechat games.jpg" width=200/>
+						<img src="files/telegram games.jpg" width=200/>
+						<img src="files/phonepe games.jpg" width=200/>
+
+						<aside class="notes">
+							The major messenger platforms support HTML5 games within the app itself as web view. This gives the games immediate access to a social graph and it becomes much easier for the player to share scores, take turns between friends.
+
+							Although most data is secret, there is some of the published data for Facebook Instant:
+							Lotum 4 Pics 1 Word = 8M Monthly Active Players
+							Nordeus’s Golden Boot - 30 M players in 4 months
+						</aside>
+					</section>
+
+					<section data-background-iframe="https://playcanv.as/p/JERg21J8/">
+						<aside class="notes">
+							Pre-Snap, we released Master Archer on Instant Games when it was first announced and very high up in the charts for active users. Unfortunately, monetisation wasn't quite ready then which was a bit of a shame.
+
+							We've seen some developers try to use Instant Games as a form IP advertising their mobile titles by making mini games.
+						</aside>
+					</section>
+
+					<section data-background-iframe="https://www.youtube.com/embed/BfvubHha69k?start=2614">
+						<aside class="notes">
+							And of course Snap Games where we have 20 mins played per player every day. And to give an idea of numbers, one of our best titles is Mojiworks Ready Chef Go that had 25M players in 6 months.
+						</aside>
+					</section>
+
+					<section>
+						<h2>KaiOS</h2>
+						<img src="files/kai os.jpg" width=600 />
+					</section>
+
 					<section data-markdown>
 						<textarea data-template>
-						## KaiOS
+							* Based on Firefox OS - A Web based OS
+							* 100 million devices across 100 countries (May 2019)
+							* 500+ apps on the KaiStore (April 2020)
+							* As little as $17!
+
+							<a href="https://www.theverge.com/2019/7/22/20703872/whatsapp-kaios-nokia-8110-jio-phone-feature-phones" target="_blank"><img src="files/nokia kaios verge.jpg" width=400/></a>
+
+							<aside class="notes">
+								KaiOS is an interesting platform. Feature phone that gives the user ability to use WhatsApp, Twitter, Facebook, YouTube in a relatively cheap package. All the apps are HTML5 based and we have seen some PlayCanvas users consider publishing to the store.
+
+								They had around 4-5% market share in India in 2018-2019 but that has dropped since. Google have recently announced that they are working with Jio (telecoms provider) to develop cheap smart phones so it be interesting to see how that all pans out.
+							</aside>
 						</textarea>
+					</section>
+
+					<section data-background-iframe="https://www.youtube.com/embed/76REwkhV01E?start=38">
 					</section>
 				</section>
 
@@ -122,27 +257,48 @@
 					<section data-markdown>
 						<textarea data-template>
 						## What's coming next
+
+						Note:
+						What is getting me excited about the next year or so.
 						</textarea>
 					</section>
 
 					<section data-markdown>
 						<textarea data-template>
-						## iOS 14 with WebGL2 support
+						## Hoping for WebGL2 support on iOS 14
+						* Instancing
+						* Non POT texture support for filtering, wrapping, and mipmapping
+						* Other performance optimisations
+
+						Note:
+						This will give us feature parity between iOS and Android and really take advantage of the graphics capability on iPhones. Even with WebGL 1, it's really good so I'm really hoping for this to happen
 						</textarea>
+					</section>
+
+					<section data-background-iframe="https://playcanv.as/e/p/44MRmJRU/" data-background-interactive>
 					</section>
 
 					<section data-markdown>
 						<textarea data-template>
 						## WASM
+						* Faster performance
 						* More languages can be used
 							* Rust
 							* C and C++
 							* Haxe
 							* _etc_
+
+						Note:
+						WebAssembly is a binary instruction format for a virtual mahcine in the browser. Aka, it's fast and is a portable compile targe for other languages such as Rust and C. WASM is not new in itself but more and more projects are taking advantage of it are increasing.
+
+						We are using it for our Basis compression library and physics (Bullet). The downside, is that the binaries can be relatively large. Basis adds about 200K to the download size which doesn't seem much, that's bigger than our engine.
 						</textarea>
 					</section>
 
 					<section data-background-iframe="https://d07riv.github.io/diabloweb/" data-background-interactive>
+						<aside class="notes">
+							One example is Diablo running in the browser. It may be the first version, but it's Diablo in a browser at full speed which is pretty sweet. Other demos are retro emulators and even Godot.
+						</aside>
 					</section>
 
 					<section data-markdown>
@@ -152,39 +308,98 @@
 					</section>
 
 					<section data-background-iframe="https://www.youtube.com/embed/kpsLKob5Ju8" data-background-interactive>
+						<aside class="notes">
+							WebXR is a draft for the new API to provide VR and AR experiences from the browser. This is an example of a PlayCanva user making a VR game for a Game Jam.
+						</aside>
 					</section>
 
 					<section data-background-iframe="https://www.youtube.com/embed/H5KoguDR5No?start=15" data-background-interactive>
+						<aside class="notes">
+							The AR side of things is more exciting for me and I'm expecting it be a game changer. On Android, it uses Ar Core under the hood and the fact that it runs from the browser, reduces the friction to needing an external app to try something that you see on a poster or find on a website. I can imagine browsing the IKEA store site to see if a chair fits in the space without the friction of installing their app.
+
+							I really hope that iOS do implement this with Ar Kit. Fingers crossed for that.
+						</aside>
+					</section>
+
+					<section data-markdown>
+						<textarea data-template>
+						## WebGPU
+						* Higher performance
+						* Compute
+
+						Note:
+						This isn't my domain but excited for it all the same, especially with WebXR AR experiences. With compute, that means heavy image processing is a possiblity which can lead to some interesting AR applications.
+						</textarea>
+					</section>
+
+					<section data-background-iframe="https://www.youtube.com/embed/eYgkDymaNr8" data-background-interactive>
+					</section>
+
+					<section data-background-iframe="https://www.youtube.com/embed/EhWvqaRDz5s" data-background-interactive>
 					</section>
 				</section>
 
 				<section data-markdown>
 					<textarea data-template>
 					## What to consider when making browser games
+					* Web as a platform
+					* Load times
+					* Stickiness
+					* Multi-platform and multi-device 😞
 					</textarea>
 				</section>
 
 				<section data-markdown>
 					<textarea data-template>
 					## PlayCanvas Demo
+
+					Note:
+					Open up Keepy Up as it’s small enough to digest quickly and covers some major feature sets.
+					Quick run through the Editor.
+					Fork.
+					Branch.
+					Look at the ball material.
+					Change the logo.
+					Change the position of the score to the top right.
+					Make the ball easier to hit by exposing the tap radius and tweaking it live to get it to ‘feel’ right.
+					Update the particle effect.
+					Optimise network load.
+					Commit. Merge.
+					Publish and share URL link.
+					Show package size
 					</textarea>
 				</section>
 
 				<section data-markdown>
 					<textarea data-template>
 					## Upcoming features for PlayCanvas
+					* Templates
+					* Basis texture support
+					* Animations state graph controller
+					* JSON attributes
+					* Shader node editor
+					* User editor extension support
 					</textarea>
 				</section>
 
 				<section data-markdown>
 					<textarea data-template>
 					## Other frameworks to consider
+					* Three.js, Babylon.js
+					* Pixi.js, Phaser
 					</textarea>
+				</section>
+
+				<section>
+					<iframe src="https://giphy.com/embed/l4q8cJzGdR9J8w3hS" width="480" height="271" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/obama-barack-obama-president-l4q8cJzGdR9J8w3hS">via GIPHY</a></p>
 				</section>
 
 				<section data-markdown>
 					<textarea data-template>
 					## Questions
+
+					Note:
+					Please grab me if you interested in trying out PlayCanvas and/or would like a more in depth chat on features and suitability! I can sort out a trial coupon or setup a call to talk through needs :)
 					</textarea>
 				</section>
 			</div>
