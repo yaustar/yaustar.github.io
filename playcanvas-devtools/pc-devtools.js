@@ -32,11 +32,6 @@
 
     pcDevtools.graphPrinter.withFilter = function (node, path, filterString) {
         var i;
-        var indentStr = "";
-
-        for (i = 0; i < node.graphDepth; ++i) {
-            indentStr += "  ";
-        }
 
         var shouldPrint = true;
         if (filterString && filterString.length > 0) {
@@ -58,17 +53,23 @@
             path += node.name;
         }
 
-        if (shouldPrint && node !== pcDevtools.app.root) {
-            var str = '%c' + indentStr + node.name;
+        shouldPrint = shouldPrint && node !== pcDevtools.app.root;
+
+        if (shouldPrint) {
+            var str = '%c' + node.name;
             if (this.showPaths) {
                 str += ' [' + path + ']';
             }
-            console.log(str, color);
+            console.group(str, color);
         }
 
         var children = node.children;
         for (i = 0; i < children.length; ++i) {
             this.withFilter(children[i], path, filterString);
+        }
+
+        if (shouldPrint) {
+            console.groupEnd(str, color);
         }
     };
 
