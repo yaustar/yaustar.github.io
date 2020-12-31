@@ -139,6 +139,7 @@ DebugPhysics.prototype.postUpdate = function (dt) {
                             });
                             debugShape._height = collision.height;
                             debugShape._radius = collision.radius;
+                            debugShape._axis = collision.axis;
                             break;
                         case 'cylinder':
                             mesh = pc.createCylinder(this.app.graphicsDevice, {
@@ -200,11 +201,11 @@ DebugPhysics.prototype.postUpdate = function (dt) {
 
                 // If the shape is a cylinder or a capsule, rotate it so that it's axis is 
                 // taken into account
-                if (collision.type == 'cylinder' || collision.type == 'capsule') {
-                    if (collision._debugShape._axis == 0) {
+                if (collision.type == 'cylinder' || collision.type == 'capsule' || collision.type == 'cone') {
+                    if (collision._debugShape._axis === 0) {
                         // X
-                        collision._debugShape.rotateLocal(0, 0, 90);
-                    } else if (collision._debugShape._axis == 2) {
+                        collision._debugShape.rotateLocal(0, 0, -90);
+                    } else if (collision._debugShape._axis === 2) {
                         // Z
                         collision._debugShape.rotateLocal(90, 0, 0);
                     }
