@@ -1,5 +1,5 @@
-ASSET_PREFIX = "";
-SCRIPT_PREFIX = "";
+ASSET_PREFIX = "https://yaustar.github.io/flappy/";
+SCRIPT_PREFIX = "https://yaustar.github.io/flappy/";
 SCENE_PATH = "404993.json";
 CONTEXT_OPTIONS = {
     'antialias': true,
