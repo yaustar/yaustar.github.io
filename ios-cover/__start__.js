@@ -55,6 +55,7 @@
 
     var lastWindowHeight = window.innerHeight;
     var lastWindowWidth = window.innerWidth;
+    var windowSizeChangeIntervalHandler = null;
 
     var reflow = function () {
         canvas.style.width = '';
@@ -70,6 +71,27 @@
                 canvas.style.marginTop = '';
             }
         }
+
+        // Poll for size changes as the window inner height can change after the resize event for iOS
+        // Have one tab only, and rotrait to portrait -> landscape -> portrait
+        if (windowSizeChangeIntervalHandler === null) {
+            windowSizeChangeIntervalHandler = setInterval(function () {
+                if (lastWindowHeight !== window.innerHeight || lastWindowWidth !== window.innerWidth) {
+                    reflow();
+                }
+
+                lastWindowHeight = window.innerHeight;
+                lastWindowWidth = window.innerWidth;
+            }, 100);
+        }
+
+        // Don't want to do this all the time so stop polling after some short time
+        setTimeout(function() {
+            if (!!windowSizeChangeIntervalHandler) {
+                clearInterval(windowSizeChangeIntervalHandler);
+                windowSizeChangeIntervalHandler = null;
+            }
+        }, 500)
 
         lastWindowHeight = window.innerHeight;
         lastWindowWidth = window.innerWidth;
@@ -160,14 +182,4 @@
     } else {
         configure();
     }
-
-
-    setInterval(function () {
-        if (lastWindowHeight !== window.innerHeight || lastWindowWidth !== window.innerWidth) {
-            reflow();
-        }
-
-        lastWindowHeight = window.innerHeight;
-        lastWindowWidth = window.innerWidth;
-    }, 100);
 })();
