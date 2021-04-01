@@ -83,15 +83,15 @@
                 lastWindowHeight = window.innerHeight;
                 lastWindowWidth = window.innerWidth;
             }, 100);
-        }
 
-        // Don't want to do this all the time so stop polling after some short time
-        setTimeout(function() {
-            if (!!windowSizeChangeIntervalHandler) {
-                clearInterval(windowSizeChangeIntervalHandler);
-                windowSizeChangeIntervalHandler = null;
-            }
-        }, 500)
+            // Don't want to do this all the time so stop polling after some short time
+            setTimeout(function() {
+                if (!!windowSizeChangeIntervalHandler) {
+                    clearInterval(windowSizeChangeIntervalHandler);
+                    windowSizeChangeIntervalHandler = null;
+                }
+            }, 500);
+        }
 
         lastWindowHeight = window.innerHeight;
         lastWindowWidth = window.innerWidth;
