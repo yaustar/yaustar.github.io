@@ -53,10 +53,13 @@
         }
     };
 
+    var lastWindowHeight = window.innerHeight;
+    var lastWindowWidth = window.innerWidth;
+
     var reflow = function () {
-        app.resizeCanvas(canvas.width, canvas.height);
         canvas.style.width = '';
         canvas.style.height = '';
+        app.resizeCanvas(canvas.width, canvas.height);
 
         var fillMode = app._fillMode;
 
@@ -67,6 +70,9 @@
                 canvas.style.marginTop = '';
             }
         }
+
+        lastWindowHeight = window.innerHeight;
+        lastWindowWidth = window.innerWidth;
     };
 
     var displayError = function (html) {
@@ -155,4 +161,13 @@
         configure();
     }
 
+
+    setInterval(function () {
+        if (lastWindowHeight !== window.innerHeight || lastWindowWidth !== window.innerWidth) {
+            reflow
+        }
+
+        lastWindowHeight = window.innerHeight;
+        lastWindowWidth = window.innerWidth;
+    }, 100);
 })();
