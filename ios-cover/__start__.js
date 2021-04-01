@@ -164,7 +164,7 @@
 
     setInterval(function () {
         if (lastWindowHeight !== window.innerHeight || lastWindowWidth !== window.innerWidth) {
-            reflow
+            reflow();
         }
 
         lastWindowHeight = window.innerHeight;
