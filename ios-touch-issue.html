@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Barebones</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body {
+            margin: 0;
+            max-height: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: 'white';
+            font-family: Helvetica, arial, sans-serif;
+            position: relative;
+            width: 100%;
+            -webkit-tap-highlight-color: transparent;
+            display: block;
+            background-color: 'white';
+        }
+
+        html {
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        var textElement = document.createElement("div");
+        document.body.appendChild(textElement);
+        textElement.style.position = 'absolute';
+
+        textElement.textContent = 'hello';
+        textElement.style.color = 'black';
+        textElement.style.fontSize = '48px';
+        textElement.style.top = 'px';
+        textElement.style.left = '10px';
+
+        window.addEventListener("touchstart", handleStart);
+        window.addEventListener("touchend", handleEnd);
+
+        function handleStart(event) {
+            textElement.textContent = event.touches.length + ' ' + event.changedTouches[0].identifier + ' ' + event
+                .changedTouches[0].pageX.toFixed(2) + ' ' + event.changedTouches[0].pageY.toFixed(2);
+
+            if (event.changedTouches[0].pageX > window.innerWidth / 2) {
+                document.body.style.backgroundColor = 'red';
+            } else {
+                document.body.style.backgroundColor = 'white';
+            }
+        }
+
+        function handleEnd(event) {
+            event.preventDefault();
+        }
+    </script>
+</body>
+
+</html>
