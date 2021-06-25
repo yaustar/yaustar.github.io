@@ -156,14 +156,15 @@
     pcDevtools.assetTools = {};
     pcDevtools.assetTools.printAssetList = function (assets) {
         var regexString = '\\b(?:';
-
+        var validAssetCount = 0;
         for (let i = 0; i < assets.length; i++) {
             if (assets[i].type !== 'folder' && assets[i].type !== 'script') {
                 console.log("\"" + assets[i].name + "\" [" + assets[i].type + "]");
-                if (i > 0) {
+                if (validAssetCount > 0) {
                     regexString += '|';
                 }
                 regexString += assets[i].name;
+                validAssetCount += 1;
             }
         }
 
