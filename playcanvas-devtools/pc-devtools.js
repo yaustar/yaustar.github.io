@@ -155,7 +155,7 @@
 
     pcDevtools.assetTools = {};
     pcDevtools.assetTools.printAssetList = function (assets) {
-        var regexString = '(?:';
+        var regexString = '\\b(?:';
 
         for (let i = 0; i < assets.length; i++) {
             if (assets[i].type !== 'folder') {
@@ -167,7 +167,7 @@
             }
         }
 
-        regexString += ')';
+        regexString += ')\\b';
 
         console.log('\n=== Regex string ===\n');
         console.log(regexString);
