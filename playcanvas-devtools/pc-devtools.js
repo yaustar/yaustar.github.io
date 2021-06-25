@@ -158,7 +158,7 @@
         var regexString = '\\b(?:';
 
         for (let i = 0; i < assets.length; i++) {
-            if (assets[i].type !== 'folder') {
+            if (assets[i].type !== 'folder' && assets[i].type !== 'script') {
                 console.log("\"" + assets[i].name + "\" [" + assets[i].type + "]");
                 if (i > 0) {
                     regexString += '|';
