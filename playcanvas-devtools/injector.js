@@ -101,6 +101,17 @@ if (!__addedDebugTools__) {
                 dummyObj.picker.cameraDropdownController = entityPickerFolder.add(dummyObj.picker, 'camera', cameraPaths);
             };
 
+            dummyObj.assetTools = {};
+            dummyObj.assetTools.listAllPreloadedAssets = function () {
+                console.log('\n=== Preloaded Assets ===');
+                pcDevtools.assetTools.listAllPreloadedAssets();
+            };
+
+            dummyObj.assetTools.listNonPreloadedAssets = function () {
+                console.log('\n=== Non Preloaded Assets ===');
+                pcDevtools.assetTools.listNonPreloadedAssets();
+            };
+
 
             var callback = function () {
                 console.log('All PlayCanvas Debug Tool scripts loaded');
@@ -125,9 +136,13 @@ if (!__addedDebugTools__) {
                 printGraphFolder.add(dummyObj.printGraph, 'enabledNodesOnly');
                 printGraphFolder.add(dummyObj.printGraph, 'printPaths');
 
-                entityPickerFolder = datgui.addFolder('Entity Picker');
+                entityPickerFolder  = datgui.addFolder('Entity Picker');
                 entityPickerFolder.add(dummyObj.picker, 'enabled');
                 entityPickerFolder.add(dummyObj.picker, 'refreshActiveCameras');
+
+                var assetToolsFolder = datgui.addFolder('Asset Tools');
+                assetToolsFolder.add(dummyObj.assetTools, 'listAllPreloadedAssets');
+                assetToolsFolder.add(dummyObj.assetTools, 'listNonPreloadedAssets');
 
                 dummyObj.picker.refreshActiveCameras();
             };

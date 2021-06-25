@@ -152,7 +152,39 @@
 
         return scriptInstance;
     };
-    
+
+    pcDevtools.assetTools = {};
+    pcDevtools.assetTools.printAssetList = function (assets) {
+        var regexString = '(?:';
+
+        for (let i = 0; i < assets.length; i++) {
+            if (assets[i].type !== 'folder') {
+                console.log("\"" + assets[i].name + "\" [" + assets[i].type + "]");
+                if (i > 0) {
+                    regexString += '|';
+                }
+                regexString += assets[i].name;
+            }
+        }
+
+        regexString += ')';
+
+        console.log('\n=== Regex string ===\n');
+        console.log(regexString);
+    };
+
+    pcDevtools.assetTools.listAllPreloadedAssets = function() {
+        var app = pcDevtools.app;
+        var assets = app.assets.list({preload: true});
+        this.printAssetList(assets);
+    };
+
+    pcDevtools.assetTools.listNonPreloadedAssets = function() {
+        var app = pcDevtools.app;
+        var assets = app.assets.list({preload: false});
+        this.printAssetList(assets);
+    };
+
     // Add a object watch shim
     if (!Object.prototype.watch) {
         Object.defineProperty(Object.prototype, "watch", {
