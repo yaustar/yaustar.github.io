@@ -15,11 +15,18 @@ if (!__addedDebugTools__) {
                 'dat.gui.min.js',
                 'playcanvas-extras.js',
                 'debug-physics.js',
-                'pc-devtools.js'
+                'pc-devtools.js',
+                'debug-gamepad-flycamera.js'
             ];
 
             var app = pc.Application.getApplication();
-            var debugPhysicsFolder, entityPickerFolder;
+
+            // Add gamepad support if we don't have it
+            if (!app.gamepads) {
+                app.gamepads = new pc.GamePads();
+            }
+
+            var debugPhysicsFolder;
             var datgui;
 
             var dummyObj = {};
@@ -29,7 +36,7 @@ if (!__addedDebugTools__) {
                 }
 
                 // Add the physics debugger
-                var debugPhysics = pcDevtools.addScriptTypeToDebugEntity('__debugPhysics__', {
+                var debugPhysics = pcDevtools.addScriptTypeToDebugEntity('__debugPhysics__', '__debugPhysics__', {
                     drawShapes: true,
                     opacity: 0.5,
                     castShadows: false
@@ -65,6 +72,27 @@ if (!__addedDebugTools__) {
                 set: function(value) { pcDevtools.graphPrinter.showPaths = value; }
             });
 
+            var refreshActiveCameras = function(obj) {
+                if (obj.cameraDropdownController) {
+                    obj.cameraFolder.remove(obj.cameraDropdownController);
+                }
+
+                var cameras = app.systems.camera.cameras;
+                var cameraPaths = [];
+                var i;
+                for (i = 0; i < cameras.length; ++i) {
+                    var camera = cameras[i];
+                    if (camera.entity.enabled) {
+                        cameraPaths.push(pcDevtools.getPathToEntity(camera.entity));
+                    }
+                }
+
+                if (cameraPaths.length > 0) {
+                    obj.camera = cameraPaths[0];
+                }
+
+                obj.cameraDropdownController = obj.cameraFolder.add(obj, 'camera', cameraPaths);
+            }
 
             dummyObj.picker = {};
 
@@ -80,25 +108,7 @@ if (!__addedDebugTools__) {
 
             dummyObj.picker.cameraDropdownController = null;
             dummyObj.picker.refreshActiveCameras = function() {
-                if (dummyObj.picker.cameraDropdownController) {
-                    entityPickerFolder.remove(dummyObj.picker.cameraDropdownController);
-                }
-
-                var cameras = app.systems.camera.cameras;
-                var cameraPaths = [];
-                var i;
-                for (i = 0; i < cameras.length; ++i) {
-                    var camera = cameras[i];
-                    if (camera.entity.enabled) {
-                        cameraPaths.push(pcDevtools.getPathToEntity(camera.entity));
-                    }
-                }
-
-                if (cameraPaths.length > 0) {
-                    dummyObj.picker.camera = cameraPaths[0];
-                }
-
-                dummyObj.picker.cameraDropdownController = entityPickerFolder.add(dummyObj.picker, 'camera', cameraPaths);
+                refreshActiveCameras(dummyObj.picker);
             };
 
             dummyObj.assetTools = {};
@@ -111,6 +121,50 @@ if (!__addedDebugTools__) {
                 console.log('\n=== Non Preloaded Assets ===');
                 pcDevtools.assetTools.listNonPreloadedAssets();
             };
+
+            
+            // Debug Fly camera setup
+            dummyObj.debugFlyCamera = {};
+            dummyObj.debugFlyCamera.cameraPath = '';
+            dummyObj.debugFlyCamera.currentScriptInstance = null;
+            dummyObj.debugFlyCamera.datGuiEntries = [];
+            dummyObj.debugFlyCamera.refreshActiveCameras = function() {
+                refreshActiveCameras(dummyObj.debugFlyCamera);
+            };
+
+            Object.defineProperty(dummyObj.debugFlyCamera, 'enabled', {
+                get: function() { return dummyObj.debugFlyCamera.currentScriptInstance !== null; },
+                set: function(value) { 
+                    if (this.currentScriptInstance) {
+                        var entity = this.currentScriptInstance.entity;
+                        entity.script.destroy('__debugGamepadFlyCamera__');
+                        this.currentScriptInstance = null;
+
+                        for (var i = 0; i < this.datGuiEntries.length; i++) {
+                            this.cameraFolder.remove(this.datGuiEntries[i]);
+                        }
+
+                        this.datGuiEntries = [];
+                    } else {
+                        var entity = app.root.findByPath(this.cameraPath);
+                        if (entity) {
+                            if (!entity.script) {
+                                entity.addComponent('script');
+                            }
+                            this.currentScriptInstance = entity.script.create('__debugGamepadFlyCamera__');
+                            this.datGuiEntries.push(this.cameraFolder.add(this.currentScriptInstance, 'gamepadIndex'));
+                            this.datGuiEntries.push(this.cameraFolder.add(this.currentScriptInstance, 'moveSensitivity'));
+                            this.datGuiEntries.push(this.cameraFolder.add(this.currentScriptInstance, 'lookSensitivity'));
+                            this.datGuiEntries.push(this.cameraFolder.add(this.currentScriptInstance, 'invert'));
+                        }
+                    }
+                }
+            });
+
+            Object.defineProperty(dummyObj.debugFlyCamera, 'camera', {
+                get: function() { return this.cameraPath; },
+                set: function(value) { this.cameraPath = value; }
+            });
 
 
             var callback = function () {
@@ -136,15 +190,19 @@ if (!__addedDebugTools__) {
                 printGraphFolder.add(dummyObj.printGraph, 'enabledNodesOnly');
                 printGraphFolder.add(dummyObj.printGraph, 'printPaths');
 
-                entityPickerFolder  = datgui.addFolder('Entity Picker');
-                entityPickerFolder.add(dummyObj.picker, 'enabled');
-                entityPickerFolder.add(dummyObj.picker, 'refreshActiveCameras');
+                dummyObj.picker.cameraFolder = datgui.addFolder('Entity Picker');
+                dummyObj.picker.cameraFolder.add(dummyObj.picker, 'enabled');
+                dummyObj.picker.cameraFolder.add(dummyObj.picker, 'refreshActiveCameras');
+                dummyObj.picker.refreshActiveCameras();
+
+                dummyObj.debugFlyCamera.cameraFolder = datgui.addFolder('Debug Fly Camera');
+                dummyObj.debugFlyCamera.cameraFolder.add(dummyObj.debugFlyCamera, 'enabled');
+                dummyObj.debugFlyCamera.cameraFolder.add(dummyObj.debugFlyCamera, 'refreshActiveCameras');
+                dummyObj.debugFlyCamera.refreshActiveCameras();
 
                 var assetToolsFolder = datgui.addFolder('Asset Tools');
                 assetToolsFolder.add(dummyObj.assetTools, 'listAllPreloadedAssets');
                 assetToolsFolder.add(dummyObj.assetTools, 'listNonPreloadedAssets');
-
-                dummyObj.picker.refreshActiveCameras();
             };
 
             var scriptsLoaded = 0;

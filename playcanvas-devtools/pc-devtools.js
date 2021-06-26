@@ -122,9 +122,7 @@
     };
 
     pcDevtools.picker.onSelectMouse = function (evt) {
-        if (evt.button == pc.MOUSEBUTTON_MIDDLE) {
-            this.onSelect(evt.x, evt.y);
-        }
+        this.onSelect(evt.x, evt.y);
     };
 
     pcDevtools.picker.onSelectTouch = function (evt) {
@@ -134,9 +132,9 @@
 
 
     pcDevtools.debugEntityName = '__devtools__';
-    pcDevtools.addScriptTypeToDebugEntity = function (scriptName, data) {
+    pcDevtools.addScriptTypeToDebugEntity = function (entityName, scriptName, data) {
         var app = pcDevtools.app;
-        var debugEntity = app.root.findByName(this.debugEntityName);
+        var debugEntity = app.root.findByName(entityName);
         if (!debugEntity) {
             debugEntity = new pc.Entity();
             debugEntity.addComponent('script');
