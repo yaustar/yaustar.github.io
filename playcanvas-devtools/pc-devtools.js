@@ -77,8 +77,8 @@
 
     pcDevtools.picker.onSelect = function (x, y) {
         if (this.enabled) {
-            if (!this.picker.picker) {
-                this.picker.picker = new pc.Picker(this.app, 1024, 1024);
+            if (!this.picker) {
+                this.picker = new pc.Picker(pcDevtools.app, 1024, 1024);
             }
 
             var app = pcDevtools.app;

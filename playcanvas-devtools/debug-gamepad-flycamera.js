@@ -2,12 +2,12 @@ var DebugGamepadFlyCamera = pc.createScript('__debugGamepadFlyCamera__');
 
 DebugGamepadFlyCamera.attributes.add('moveSensitivity', {
     type: 'number',
-    default: 5
+    default: 10
 });
 
 DebugGamepadFlyCamera.attributes.add('lookSensitivity', {
     type: 'number',
-    default: 75
+    default: 100
 });
 
 
@@ -24,15 +24,15 @@ DebugGamepadFlyCamera.prototype.initialize = function () {
     
     this._dt = 0;
     
-    this._startPosition = this.entity.getPosition().clone();
-    this._startRotation = this.entity.getRotation().clone();
+    this._startLocalPosition = this.entity.getLocalPosition().clone();
+    this._startLocalRotation = this.entity.getLocalRotation().clone();
     
     this.app.on('framerender', this._update, this);
     this.on('destroy', function() {
         this.app.off('framerender', this._update, this);
 
-        this.entity.setPosition(this._startPosition);
-        this.entity.setRotation(this._startRotation);
+        this.entity.setPosition(this._startLocalPosition);
+        this.entity.setRotation(this._startLocalRotation);
     }, this);
 };
 
@@ -84,6 +84,27 @@ DebugGamepadFlyCamera.prototype._update = function () {
     }
     
     this.entity.setPosition(this.position);
+
+    // Update settings from controller
+    if (gamepads.wasPressed(this.gamepadIndex, pc.PAD_UP)) {
+        this.moveSensitivity += 5;
+    }
+
+    if (gamepads.wasPressed(this.gamepadIndex, pc.PAD_DOWN)) {
+        this.moveSensitivity -= 5;
+    }
+
+    if (gamepads.wasPressed(this.gamepadIndex, pc.PAD_LEFT)) {
+        this.lookSensitivity -= 25;
+    }
+
+    if (gamepads.wasPressed(this.gamepadIndex, pc.PAD_RIGHT)) {
+        this.lookSensitivity += 25;
+    }
+
+    if (gamepads.wasPressed(this.gamepadIndex, pc.PAD_FACE_1)) {
+        this.invert = !this.invert;
+    }
 
     // Force render
     this.app.renderNextFrame = true;

@@ -154,7 +154,7 @@ if (!__addedDebugTools__) {
                             this.currentScriptInstance = entity.script.create('__debugGamepadFlyCamera__');
                             this.datGuiEntries.push(this.cameraFolder.add(this.currentScriptInstance, 'gamepadIndex'));
                             this.datGuiEntries.push(this.cameraFolder.add(this.currentScriptInstance, 'moveSensitivity'));
-                            this.datGuiEntries.push(this.cameraFolder.add(this.currentScriptInstance, 'lookSensitivity'));
+                            this.datGuiEntries.push(this.cameraFolder.add(this.currentScriptInstance, 'lookSensitivity').listen());
                             this.datGuiEntries.push(this.cameraFolder.add(this.currentScriptInstance, 'invert'));
                         }
                     }
@@ -177,6 +177,21 @@ if (!__addedDebugTools__) {
 
                 // Load dat gui
                 datgui = new dat.GUI();
+
+                // Force update values
+                var updateDisplay = function(gui) {
+                    for (var i in gui.__controllers) {
+                        gui.__controllers[i].updateDisplay();
+                    }
+                    for (var f in gui.__folders) {
+                        updateDisplay(gui.__folders[f]);
+                    }
+                };
+
+                app.on('update', function() {
+                    updateDisplay(datgui);
+                });
+
                 var ministatsFolder = datgui.addFolder('Mini Stats');
                 ministatsFolder.add(ministats, 'enabled');
 
