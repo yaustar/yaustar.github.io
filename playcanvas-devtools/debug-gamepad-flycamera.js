@@ -24,10 +24,15 @@ DebugGamepadFlyCamera.prototype.initialize = function () {
     
     this._dt = 0;
     
+    this._startPosition = this.entity.getPosition().clone();
+    this._startRotation = this.entity.getRotation().clone();
     
-    this.app.on('prerender', this._update, this);
+    this.app.on('framerender', this._update, this);
     this.on('destroy', function() {
-        this.app.off('prerender', this._update, this);
+        this.app.off('framerender', this._update, this);
+
+        this.entity.setPosition(this._startPosition);
+        this.entity.setRotation(this._startRotation);
     }, this);
 };
 
@@ -62,10 +67,10 @@ DebugGamepadFlyCamera.prototype._update = function () {
     
     // Update the camera's position
     var moveAmount = DebugGamepadFlyCamera.__moveAmount;
-    moveAmount.copy(this.entity.forward).mulScalar(this.moveSensitivity * dt * -moveStickY);
+    moveAmount.copy(this.entity.forward).scale(this.moveSensitivity * dt * -moveStickY);
     this.position.add(moveAmount);
     
-    moveAmount.copy(this.entity.right).mulScalar(this.moveSensitivity * dt * moveStickX);
+    moveAmount.copy(this.entity.right).scale(this.moveSensitivity * dt * moveStickX);
     this.position.add(moveAmount);
 
     // Update panning
@@ -74,9 +79,12 @@ DebugGamepadFlyCamera.prototype._update = function () {
         var leftTrigger = pad.buttons[6].value;
         var rightTrigger = pad.buttons[7].value;
         
-        moveAmount.copy(this.entity.up).mulScalar(this.moveSensitivity * dt * (leftTrigger - rightTrigger));
+        moveAmount.copy(this.entity.up).scale(this.moveSensitivity * dt * (leftTrigger - rightTrigger));
         this.position.add(moveAmount);  
     }
     
     this.entity.setPosition(this.position);
+
+    // Force render
+    this.app.renderNextFrame = true;
 };

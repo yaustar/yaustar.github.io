@@ -6,8 +6,6 @@
 
         this.app = app;
 
-        // Create a frame buffer picker with a resolution of 1024x1024
-        this.picker.picker = new pc.Picker(this.app, 1024, 1024);
         app.mouse.on(pc.EVENT_MOUSEDOWN, this.picker.onSelectMouse, this.picker);
         if (app.touch) {
             app.touch.on(pc.EVENT_TOUCHSTART, this.picker.onSelectTouch, this.picker);
@@ -79,6 +77,10 @@
 
     pcDevtools.picker.onSelect = function (x, y) {
         if (this.enabled) {
+            if (!this.picker.picker) {
+                this.picker.picker = new pc.Picker(this.app, 1024, 1024);
+            }
+
             var app = pcDevtools.app;
             var camera = app.root.findByPath(this.cameraPath).camera;
 
