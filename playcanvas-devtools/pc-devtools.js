@@ -1,5 +1,5 @@
 (function () {
-    var pcDevtools = {};
+    var pcDevtools = pcDevtools || {};
 
     pcDevtools.init = function () {
         var app = pc.Application.getApplication();
@@ -20,55 +20,6 @@
         }
 
         return path;
-    };
-
-
-    pcDevtools.graphPrinter = {};
-
-    pcDevtools.graphPrinter.enabledNodesOnly = false;
-    pcDevtools.graphPrinter.showPaths = false;
-
-    pcDevtools.graphPrinter.withFilter = function (node, path, filterString) {
-        var i;
-
-        var shouldPrint = true;
-        if (filterString && filterString.length > 0) {
-            shouldPrint = eval(filterString);
-        }
-
-        // Make the text grey if it is disabled
-        var color = '';
-        if (!node.enabled) {
-            if (this.enabledNodesOnly) {
-                shouldPrint = false;
-            }
-            color = 'color: #7f8c8d';
-        }
-
-        if (path.length > 0) {
-            path += '/' + node.name;
-        } else if (node !== pcDevtools.app.root) {
-            path += node.name;
-        }
-
-        shouldPrint = shouldPrint && node !== pcDevtools.app.root;
-
-        if (shouldPrint) {
-            var str = '%c' + node.name;
-            if (this.showPaths) {
-                str += ' [' + path + ']';
-            }
-            console.group(str, color);
-        }
-
-        var children = node.children;
-        for (i = 0; i < children.length; ++i) {
-            this.withFilter(children[i], path, filterString);
-        }
-
-        if (shouldPrint) {
-            console.groupEnd(str, color);
-        }
     };
 
     pcDevtools.picker = {};

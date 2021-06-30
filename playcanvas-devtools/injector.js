@@ -11,13 +11,23 @@ if (!__addedDebugTools__) {
                 console.log('Using @yaustar GitHub');
             }
 
-            var scriptFilenames = [
-                'dat.gui.min.js',
-                'playcanvas-extras.js',
-                'debug-physics.js',
+            var scriptFilenames = [];
+
+            if (!window.pcui) {
+                scriptFilenames.push('libs/pcui.js');
+            }
+
+            if (!pc.MiniStats) {
+                scriptFilenames.push('libs/playcanvas-extras.js');
+            }
+
+            scriptFilenames = scriptFilenames.concat([
+                'libs/dat.gui.min.js',
                 'pc-devtools.js',
-                'debug-gamepad-flycamera.js'
-            ];
+                'debug-physics.js',
+                'debug-gamepad-flycamera.js',
+                'graph-inspector.js'
+            ]);
 
             var app = pc.Application.getApplication();
 
@@ -48,29 +58,6 @@ if (!__addedDebugTools__) {
                 debugPhysicsFolder.add(debugPhysics, 'opacity', 0, 1);
                 debugPhysicsFolder.add(debugPhysics, 'castShadows');
             };
-
-            // Add scene graph printer
-            dummyObj.printGraph = {};
-            dummyObj.printGraph.filterString = '';
-            dummyObj.printGraph.printWithFilter = function () {
-                console.log('\n=== Print Graph with filter ' + dummyObj.printGraph.filterString + ' ===');
-                pcDevtools.graphPrinter.withFilter(app.root, '', dummyObj.printGraph.filterString);
-            };
-
-            dummyObj.printGraph.printEntitiesOnly = function () {
-                console.log('\n=== Print Graph entities only ===');
-                pcDevtools.graphPrinter.withFilter(app.root, '', 'node instanceof pc.Entity');
-            };
-
-            Object.defineProperty(dummyObj.printGraph, 'enabledNodesOnly', {
-                get: function() { return pcDevtools.graphPrinter.enabledNodesOnly; },
-                set: function(value) { pcDevtools.graphPrinter.enabledNodesOnly = value; }
-            });
-
-            Object.defineProperty(dummyObj.printGraph, 'printPaths', {
-                get: function() { return pcDevtools.graphPrinter.showPaths; },
-                set: function(value) { pcDevtools.graphPrinter.showPaths = value; }
-            });
 
             var refreshActiveCameras = function(obj) {
                 if (obj.cameraDropdownController) {
@@ -167,10 +154,19 @@ if (!__addedDebugTools__) {
             });
 
 
+            dummyObj.graphInspector = {};
+            dummyObj.graphInspector._show = true;
+
+            Object.defineProperty(dummyObj.graphInspector, 'show', {
+                get: function() { return this._show; },
+                set: function(value) { this._show = value; pcGraphInspector.show(value); }
+            });
+
             var callback = function () {
                 console.log('All PlayCanvas Debug Tool scripts loaded');
 
                 pcDevtools.init();
+                pcGraphInspector.init();
 
                 // Load the ministats
                 var ministats = new pc.MiniStats(app);
@@ -198,12 +194,8 @@ if (!__addedDebugTools__) {
                 debugPhysicsFolder = datgui.addFolder('Physics');
                 debugPhysicsFolder.add(dummyObj, 'addPhysicsDebugger');
 
-                var printGraphFolder = datgui.addFolder('Print Graph');
-                printGraphFolder.add(dummyObj.printGraph, 'filterString');
-                printGraphFolder.add(dummyObj.printGraph, 'printWithFilter');
-                printGraphFolder.add(dummyObj.printGraph, 'printEntitiesOnly');
-                printGraphFolder.add(dummyObj.printGraph, 'enabledNodesOnly');
-                printGraphFolder.add(dummyObj.printGraph, 'printPaths');
+                var graphInspectorFolder = datgui.addFolder('Graph Inspector');
+                graphInspectorFolder.add(dummyObj.graphInspector, 'show');
 
                 dummyObj.picker.cameraFolder = datgui.addFolder('Entity Picker');
                 dummyObj.picker.cameraFolder.add(dummyObj.picker, 'enabled');
