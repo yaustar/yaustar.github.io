@@ -43,7 +43,8 @@
 
         // Add buttons to refresh the hierarchy
         var refreshHierarchyButton = new pcui.Button({
-            text: 'Refresh'
+            text: 'Refresh',
+            flexShrink: 0
         });
 
         refreshHierarchyButton.on('click', function () {
@@ -55,7 +56,8 @@
 
         // Add a tick box to allow displaying graphnodes
         var showGraphNodesLabelGroup = new pcui.LabelGroup({
-            text: 'Show Graph Nodes'
+            text: 'Show Graph Nodes',
+            flexShrink: 0
         });
 
         showGraphNodesLabelGroup.label.width = 170;
@@ -75,7 +77,8 @@
 
         // Filter text input
         var filterTextLabelGroup = new pcui.LabelGroup({
-            text: 'Filter'
+            text: 'Filter',
+            flexShrink: 0
         });
 
         filterTextLabelGroup.label.width = 100;
