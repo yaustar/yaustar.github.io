@@ -1,4 +1,4 @@
-![Preview](images/preview-20200715-152807.jpg)
+![Preview](images/preview.jpg)
 # How to add to a PlayCanvas App
 
 The easiest way is to add a bookmarklet to the browser. It's the same as a bookmark but instead of a URL, you have executable JS code instead.
@@ -24,46 +24,61 @@ Render physics volumes in the scene. Requires the script to be added to the scen
 ![Physics menu](images/physics-menu.jpg)
 ![Physics menu expanded](images/physics-expanded-menu.jpg)
 
-## Print scene graph
-This will print out the scene hierarchy to the console to see the current state is. Really useful if you are adding/removing entities at runtime.
+## Graph Inspector
+This will show a treeview of the current hierarchy in the scene and also allows you to inspect entities in the browser's devtools console.
 
-![Print graph menu](images/print-graph-menu.jpg)
+![Print graph menu](images/graph-inspector-menu.png)
 
-`entitiesOnly` will only print nodes that are entities (no meshInstances)
-`enabledNodesOnly` will filter out disabled nodes from the print out
-`printPaths` will print out the hierarchy paths of each node which makes it easier to modify the entity on the console
-
-e.g.
-```
-var e = pc.app.root.findByPath('some/path/to/entity');
-e.enabled = false;
-```
-
-![Graph entities console](images/print-graph-entities-only.jpg)
-
-`withFilter` allows you to add use the conditional in the filterString to print out where `node` represents the node to filter.
+`Refresh` button updates the tree view to the current state of the scene.
+`Show Graph Nodes` tickbox will also show graph nodes in the tree view when `Refresh is pressed.
+`Filter` allows you to add use the conditional in the filterString to print out where `node` represents the node to filter.
 
 e.g.
-Set the `filterString` to `node.model` will on print nodes with a model component.
+Set the `Filter` to `node.model` will show all the nodes that were in the tree view that has a model component.
 
-![Graph filter with node.model console](images/print-graph-with-filter-model.jpg)
+![Graph filter with node.model console](images/graph-inspector-with-filter-model.jpg)
+
+Selecting any node in the tree view will print out the object in the console and assign a global variable `_selectedNode` to it. This allows you to call functions, change properties etc in the console.
+
+![Console output when selecting a node](images/graph-inspector-console-output.png)
 
 ## Entity picker
 Allows you to middle click or touch on any object in the scene and print the details to the console. Useful for finding where entities are in the hierarchy and investigating the current prosperities on said entity. The hierarchy path is also printed to make easier to directly modify the entity on the console.
 
-e.g.
-```
-var e = pc.app.root.findByPath('some/path/to/entity');
-e.enabled = false;
-```
-
 ![Entity picker menu](images/entity-picker-menu.jpg)
-![Entity picker console](images/entity-picker.jpg)
+![Entity picker console](images/graph-inspector-console-output.png)
 
 The camera list should be set to camera that is used for the current view.
+
+
+## Debug Fly Camera
+
+When enabled, you can control the selected camera in the dropdown with an attached gamepad to fly around the scene. It's not 100% perfect and has only be tested with a X360 controller but works well enough for most applications.
+
+In the case where the application uses a controller, you can select with gamepad to use (`gamepadIndex`) when you have multiple connected.
+
+![Debug fly camera menu](images/debug-fly-camera-menu.png)
+
+### Controls (X360 controller)
+
+* Left analogue stick - move forward/back and strafe left/right
+* Right analogue stick - look up/down/left/right
+* Dpad - change sensitivity for moving and looking
+* A Button - toggle look up/down invert
+* Left/Right shoulder triggers - pan up/down
+
+
+## Asset Tools
+
+Quick buttons to list all the assets that are preloaded or not preloaded in the console. Also creates a regex that can be used in the Editor assets panel to filter those assets.
+
+![Asset tools menu](images/asset-tools-menu.png)
+![Asset tools console](images/asset-tools-console-output.png)
+
 
 # Tool authors
 
 * dataarts's dat.gui
 * PlayCanvas Will's Debug physics renderer
 * PlayCanvas Donovan's ministats
+* PlayCanvas PCUI
