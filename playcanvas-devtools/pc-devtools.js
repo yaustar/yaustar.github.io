@@ -64,9 +64,17 @@
 
                 // Print it out to console and get the path to it
                 if (entity) {
+                    var node = entity;
+                    var path = node.name;
+                    while (node.parent && node.parent !== app.root) {
+                        path = node.parent.name + '/' + path;
+                        node = node.parent;
+                    }
+
+                    console.log('\nwindow._selectedNode = ' + path);
+
+                    window._selectedNode = entity;
                     console.log(entity);
-                    var path = pcDevtools.getPathToEntity(entity);
-                    console.log(path);
                 }
             }
 
