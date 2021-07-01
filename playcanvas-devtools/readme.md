@@ -78,7 +78,7 @@ Quick buttons to list all the assets that are preloaded or not preloaded in the 
 
 # Tool authors
 
-* dataarts's dat.gui
-* PlayCanvas Will's Debug physics renderer
-* PlayCanvas Donovan's ministats
-* PlayCanvas PCUI
+* dataarts's dat.gui [Apache 2.0](https://github.com/dataarts/dat.gui/blob/master/LICENSE)
+* PlayCanvas Will's Debug physics renderer [MIT](https://github.com/playcanvas/engine/blob/master/LICENSE)
+* PlayCanvas Donovan's ministats [MIT](https://github.com/playcanvas/engine/blob/master/LICENSE)
+* PlayCanvas PCUI [MIT](https://github.com/playcanvas/engine/blob/master/LICENSE)
