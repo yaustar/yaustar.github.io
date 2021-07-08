@@ -177,7 +177,9 @@ if (!__addedDebugTools__) {
                 // Force update values
                 var updateDisplay = function(gui) {
                     for (var i in gui.__controllers) {
-                        gui.__controllers[i].updateDisplay();
+                        if (gui.__controllers[i].updateDisplay) {
+                            gui.__controllers[i].updateDisplay();
+                        }
                     }
                     for (var f in gui.__folders) {
                         updateDisplay(gui.__folders[f]);
