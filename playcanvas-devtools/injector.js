@@ -36,6 +36,22 @@ if (!__addedDebugTools__) {
                 app.gamepads = new pc.GamePads();
             }
 
+            // Generic function to stop events going through doms
+            function stopPropagatingInputEvents(element) {
+                element.onkeydown = function(event) {
+                    event.stopPropagation();
+                };
+                element.onmousedown = function(event) {
+                    event.stopPropagation();
+                };
+                element.onmousemove = function(event) {
+                    event.stopPropagation();
+                };
+                element.onmousewheel = function(event) {
+                    event.stopPropagation();
+                };
+            }
+
             var debugPhysicsFolder;
             var datgui;
 
@@ -167,12 +183,15 @@ if (!__addedDebugTools__) {
 
                 pcDevtools.init();
                 pcGraphInspector.init();
+            
+                stopPropagatingInputEvents(pcGraphInspector.container.dom);
 
                 // Load the ministats
                 var ministats = new pc.MiniStats(app);
 
                 // Load dat gui
                 datgui = new dat.GUI();
+                stopPropagatingInputEvents(datgui.domElement);
 
                 // Force update values
                 var updateDisplay = function(gui) {
