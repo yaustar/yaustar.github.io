@@ -10,6 +10,17 @@ javascript:(function(){var a=document.createElement('script');a.src='https://yau
 
 More detailed instructions on how to create a bookmarklet can be [found here](https://mreidsma.github.io/bookmarklets/installing.html).
 
+## As part of a project
+
+If you would like to have this as a 'allows on' feature of your PlayCanvas project, you can create a new script file in the project and have it's contents as follows:
+
+```
+(function(){
+    var a = document.createElement('script');
+    a.src = 'https://yaustar.github.io/playcanvas-devtools/injector.js';
+    document.head.appendChild(a);
+})();
+```
 
 # Available tools
 
