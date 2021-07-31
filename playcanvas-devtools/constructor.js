@@ -200,6 +200,7 @@ var __pcDevtoolsConstruct__ = function (baseUrl, app, window) {
 
                     // Load dat gui
                     datgui = new dat.GUI();
+                    datgui.domElement.style.zIndex = 1000000;
                     stopPropagatingInputEvents(datgui.domElement);
 
                     // Force update values
