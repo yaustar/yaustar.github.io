@@ -64,9 +64,11 @@ The camera list should be set to camera that is used for the current view.
 
 ## Debug Fly Camera
 
-When enabled, you can control the selected camera in the dropdown with an attached gamepad to fly around the scene. It's not 100% perfect and has only be tested with a X360 controller but works well enough for most applications.
+When enabled, you can control the selected camera in the dropdown with an attached gamepad or mouse and keyboardto fly around the scene. It's not 100% perfect and has only be tested with a X360 controller but works well enough for most applications.
 
 In the case where the application uses a controller, you can select with gamepad to use (`gamepadIndex`) when you have multiple connected.
+
+The script also detaches the mouse and keyboard controls from the app. While the camera is enabled, you will not be able to interact with your app.
 
 ![Debug fly camera menu](images/debug-fly-camera-menu.png)
 
@@ -77,6 +79,16 @@ In the case where the application uses a controller, you can select with gamepad
 * Dpad - change sensitivity for moving and looking
 * A Button - toggle look up/down invert
 * Left/Right shoulder triggers - pan up/down
+* Start - toggle timescale from 0 to the value it was when the fly camera is enabled
+
+### Controls (Keyboard)
+
+* WASD - move forward/back and strafe left/right
+* Mouse with right mouse button held - look up/down/left/right
+* Cursor arrows - change sensitivity for moving and looking
+* I - toggle look up/down invert
+* QE - pan up/down
+* P - toggle timescale from 0 to the value it was when the fly camera is enabled
 
 
 ## Asset Tools
