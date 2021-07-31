@@ -35,7 +35,7 @@ var __pcDevtoolsConstruct__ = function (baseUrl, app, window) {
                         event.stopPropagation();
                     };
                     element.onmousemove = function (event) {
-                        event.stopPropagation();
+                        //event.stopPropagation();
                     };
                     element.onmousewheel = function (event) {
                         event.stopPropagation();
