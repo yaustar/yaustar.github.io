@@ -52,8 +52,8 @@
         this.on('destroy', function() {
             this.app.off('framerender', this._update, this);
 
-            this.entity.setPosition(this._startLocalPosition);
-            this.entity.setRotation(this._startLocalRotation);
+            this.entity.setLocalPosition(this._startLocalPosition);
+            this.entity.setLocalRotation(this._startLocalRotation);
             
             // Remove the fly camera specific handlers
             this._mouse.detach();
