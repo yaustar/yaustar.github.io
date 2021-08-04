@@ -38,12 +38,10 @@
         this.app.keyboard.detach();
         
         this._defaultTimeScale = this.app.timeScale;
-        
-        var opts = pc.platform.passiveEvents ? { passive: false } : false;
-        
+                
         // The keyboard and mouse controllers for the camera
-        this._keyboard = new pc.Keyboard(this._keyboardTargetElement, opts);
-        this._mouse = new pc.Mouse(this._mouseTargetElement, opts);
+        this._keyboard = new pc.Keyboard(this._keyboardTargetElement);
+        this._mouse = new pc.Mouse(this._mouseTargetElement);
         
         // Use your own PlayCanvas mouse and keyboard instances?
         this._mouse.on('mousemove', this._onMouseMove, this);
