@@ -1,0 +1,217 @@
+html {
+    height: 100%
+}
+
+body {
+    margin: 0;
+    max-width: 100%;
+    max-height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+    font-family: Helvetica, arial, freesans, clean, sans-serif;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+#container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 48px;
+    left: 0;
+    width: auto;
+    height: auto;
+    overflow: hidden
+}
+
+#frame {
+    border: none;
+    width: 100%;
+    height: 100%;
+    overflow: hidden
+}
+
+#footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: auto;
+    height: 48px;
+    line-height: 48px;
+    background: #263538;
+    color: #5a6f72;
+    overflow: hidden
+}
+
+#footer>.title {
+    float: left
+}
+
+#footer>.title>.img {
+    width: 127px;
+    height: 16px;
+    margin: 16px;
+    background-image: url("https://playcanvas.com/static-assets/images/logo_text_dark_16.png");
+    background-repeat: no-repeat
+}
+
+@media all and (min-width: 640px) {
+    #footer>.title:hover {
+        background-color: #1d292c
+    }
+
+    #footer>.title:hover>.img {
+        background-image: url("https://playcanvas.com/static-assets/images/logo_text_white_16.png")
+    }
+}
+
+#footer>.title>.desktop {
+    padding: 16px;
+    opacity: 0.4
+}
+
+#footer>.views {
+    float: left;
+    font-weight: 100;
+    font-size: 16px;
+    cursor: default
+}
+
+#footer>.views>.icon {
+    float: left;
+    width: 36px;
+    height: 36px;
+    margin: 6px 0
+}
+
+#footer>#fullscreen {
+    display: none;
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    left: 50%;
+    top: 0;
+    padding: 6px;
+    margin-left: -24px;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: 6px 6px;
+    background-image: url("https://playcanvas.com/static-assets/images/fs.png")
+}
+
+#footer>#fullscreen:hover {
+    background-color: #1d292c;
+    background-image: url("https://playcanvas.com/static-assets/images/fs_hover.png")
+}
+
+#footer>#fullscreen.available {
+    display: block
+}
+
+#footer>#social {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    overflow: hidden
+}
+
+#footer>#social>.share {
+    float: left;
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+    cursor: pointer;
+    background-repeat: no-repeat;
+    background-position: 6px 6px
+}
+
+#footer>#social>.share:hover {
+    background-color: #1d292c
+}
+
+#footer>#social>.share.fb {
+    background-image: url("https://playcanvas.com/static-assets/images/fb.png")
+}
+
+#footer>#social>.share.fb:hover {
+    background-image: url("https://playcanvas.com/static-assets/images/fb_hover.png")
+}
+
+#footer>#social>.share.tw {
+    background-image: url("https://playcanvas.com/static-assets/images/tw.png")
+}
+
+#footer>#social>.share.tw:hover {
+    background-image: url("https://playcanvas.com/static-assets/images/tw_hover.png")
+}
+
+#footer>#social>.share.kik {
+    background-image: url("https://playcanvas.com/static-assets/images/kik.png")
+}
+
+#footer>#social>.share.kik:hover {
+    background-image: url("https://playcanvas.com/static-assets/images/kik_hover.png")
+}
+
+@media all and (max-width: 640px) {
+    #container {
+        bottom: 32px
+    }
+
+    #footer {
+        height: 32px;
+        line-height: 32px
+    }
+
+    #footer>.title>.img {
+        margin: 0;
+        width: 32px;
+        height: 32px;
+        background-image: url("https://playcanvas.com/static-assets/images/logo/PLAY_FLAT_ORANGE3_SMALL.png")
+    }
+
+    #footer>.views {
+        padding-left: 8px;
+        font-size: 12px
+    }
+
+    #footer>.views>.icon {
+        width: 24px;
+        height: 24px;
+        margin: 4px
+    }
+
+    #footer>#fullscreen {
+        width: 24px;
+        height: 24px;
+        padding: 4px;
+        margin-left: -16px;
+        background-position: 4px 4px;
+        background-size: 24px 24px
+    }
+
+    #footer>#social>.share {
+        width: 24px;
+        height: 24px;
+        padding: 4px;
+        background-position: 4px 4px;
+        background-size: 24px 24px
+    }
+}
+
+@media (max-height: 768px),
+(max-height: 1024px) and (orientation: portrait) {
+    #footer {
+        display: none
+    }
+
+    #container {
+        bottom: 0;
+        height: 100%;
+    }
+}

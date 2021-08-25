@@ -119,7 +119,7 @@
                     clearInterval(windowSizeChangeIntervalHandler);
                     windowSizeChangeIntervalHandler = null;
                 }
-            }, 500);
+            }, 2000);
         }
     };
 

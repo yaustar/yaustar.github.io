@@ -1,7 +1,7 @@
 html {
     height: 100%;
+    width: 100%;
     background-color: #1d292c;
-    padding: env(safe-area-inset);
 }
 body {
     margin: 0;

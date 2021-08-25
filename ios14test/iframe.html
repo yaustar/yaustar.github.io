@@ -1,0 +1,163 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>iframe</title>
+
+    <meta name="description" content="A WebGL application made with PlayCanvas (https://playcanvas.com)" />
+    <meta name='viewport'
+        content='width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover' />
+    <link rel="stylesheet" href="iframe-styles.css">
+    <style>
+    </style>
+</head>
+
+<body>
+    <div id='container'>
+        <iframe id='frame' src='index.html' webkitallowfullscreen='true' mozallowfullscreen='true' allow='autoplay'
+            allowfullscreen='true' allowvr scrolling='no' frameBorder='0'>
+        </iframe>
+    </div>
+
+    <div id='footer'>
+        <a class='title' href='https://playcanvas.com/' target='_blank'>
+            <div class='img'></div>
+        </a>
+
+        <div class='views'><img class='icon' src='https://playcanvas.com/static-assets/images/eye.png' /><span
+                id="viewcount">34</span></div>
+
+        <div id='fullscreen'></div>
+
+        <div id='social'>
+        </div>
+    </div>
+
+    <!-- FULLSCREEN -->
+    <script type='text/javascript'>
+        (function() {
+            var iframe = document.getElementById('frame');
+
+            // aggregate fullscreen to one method
+            iframe.requestFullScreen = iframe.requestFullScreen || iframe.mozRequestFullScreen || iframe
+            .webkitRequestFullScreen;
+            var button = document.getElementById('fullscreen');
+
+            // detect fullscreen is supported
+            if (iframe.requestFullScreen) {
+                button.classList.add('available');
+                button.addEventListener('click', function () {
+                    iframe.requestFullScreen();
+
+                    if (kik.enabled) {
+                        kik.browser.statusBar(false);
+                    }
+                }, false);
+            }
+
+            // focus the iframe window so that keyboard works.
+            // (Chrome Fix: do this after the iframe has loaded
+            // otherwise gamepads don't work)
+            iframe.addEventListener('load', function () {
+                iframe.contentWindow.focus();
+            });
+        })();
+    </script>
+
+    <script>
+        var kik = {
+            enabled: false
+        };
+    </script>
+
+    <!-- FULL WINDOW -->
+    <script>
+        (function() {
+
+            // Needed as we will have edge cases for particlar versions of iOS
+            // returns null if not iOS
+            var getIosVersion = function () {
+                if (/iP(hone|od|ad)/.test(navigator.platform)) {
+                    var v = (navigator.appVersion).match(/OS (\d+)_(\d+)_?(\d+)?/);
+                    var version = [parseInt(v[1], 10), parseInt(v[2], 10), parseInt(v[3] || 0, 10)];
+                    return version;
+                }
+
+                return null;
+            }
+
+            var iosVersion = getIosVersion();
+            var iframe = document.getElementById('frame');
+            var footer = document.getElementById('footer');
+
+            var container = document.getElementById('container');
+            var lastWindowHeight = window.innerHeight;
+            var lastWindowWidth = window.innerWidth;
+            var windowSizeChangeIntervalHandler = null;
+
+            var resizeContainer = function () {
+                var width = window.innerWidth;
+
+                // Take into account of the footer
+                var height = window.innerHeight - footer.offsetHeight;
+
+                container.style.height = height + 'px';
+                container.style.width = width + 'px';
+
+                iframe.style.height = height + 'px';
+                iframe.style.width = width + 'px';
+
+                lastWindowHeight = window.innerHeight;
+                lastWindowWidth = window.innerWidth;
+
+                // Work around when in landscape to work on iOS 12 otherwise
+                // the content is under the URL bar at the top
+                if (iosVersion && iosVersion[0] <= 12) {
+                    window.scrollTo(0, 0);
+                }
+            };
+
+            var reflow = function () {
+                resizeContainer();
+                // Poll for size changes as the window inner height can change after the resize event for iOS
+                // Have one tab only, and rotrait to portrait -> landscape -> portrait
+                if (windowSizeChangeIntervalHandler === null) {
+                    windowSizeChangeIntervalHandler = setInterval(function () {
+                        if (lastWindowHeight !== window.innerHeight || lastWindowWidth !== window.innerWidth) {
+                            resizeContainer();
+                        }
+
+                        lastWindowHeight = window.innerHeight;
+                        lastWindowWidth = window.innerWidth;
+                    }, 100);
+
+                    // Don't want to do this all the time so stop polling after some short time
+                    setTimeout(function() {
+                        if (!!windowSizeChangeIntervalHandler) {
+                            clearInterval(windowSizeChangeIntervalHandler);
+                            windowSizeChangeIntervalHandler = null;
+                        }
+                    }, 2000);
+                }
+            };
+
+            window.addEventListener('resize', reflow, false);
+            window.addEventListener('orientationchange', reflow, false);
+
+            iframe.addEventListener('load', function () {
+                reflow();
+            });
+        })();
+    </script>
+
+    <!-- FORMAT VIEWS -->
+    <script>
+        var views = document.querySelector("#viewcount");
+        if (views) {
+            var num = parseInt(views.textContent, 10);
+            views.textContent = num.toLocaleString();
+        }
+    </script>
+</body>
+
+</html>
