@@ -31,7 +31,7 @@
                 entry.push(data[(keyIndex * componentLength) + j]);
             }
 
-            if (property === 'localRotation') {
+            if (property == 'localRotation') {
                 // Convert to eulers
                 var quat = new pc.Quat(entry[0], entry[1], entry[2], entry[3]);
                 var euler = quat.getEulerAngles();
@@ -95,9 +95,8 @@
         }
     };
 
-    var pcDevtools = pcDevtools || {};
-    pcDevtools.cmd = {};
-    pcDevtools.cmd.animationAssetReport = animationAssetReport;
+    var pcTmTools = pcTmTools || {};
+    pcTmTools.animationAssetReport = animationAssetReport;
 
-    window.pcDevtools = pcDevtools;
+    window.pcTmTools = pcTmTools;
 })();
