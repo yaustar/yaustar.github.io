@@ -57,8 +57,11 @@
                     menu = new pcui.Menu(menuArgs);
                     root.append(menu);
 
-                    menu.hidden = false;
-                    menu.position(e.event.clientX + 1, e.event.clientY);
+                    // Do this on the next frame to work
+                    setTimeout(function () {
+                        menu.hidden = false;
+                        menu.position(e.event.clientX + 1, e.event.clientY);
+                    });
 
                     e.event.preventDefault();
                     e.event.stopPropagation();
