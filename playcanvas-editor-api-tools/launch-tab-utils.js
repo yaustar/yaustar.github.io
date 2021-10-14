@@ -95,8 +95,8 @@
         }
     };
 
-    var pcTmTools = pcTmTools || {};
-    pcTmTools.animationAssetReport = animationAssetReport;
+    var pcCmdTools = pcCmdTools || {};
+    pcCmdTools.animationAssetReport = animationAssetReport;
 
-    window.pcTmTools = pcTmTools;
+    window.pcCmdTools = pcCmdTools;
 })();
