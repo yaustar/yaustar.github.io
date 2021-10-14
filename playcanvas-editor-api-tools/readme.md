@@ -32,7 +32,8 @@ Right clicking on the viewport when one entity is selected will give a list of t
 pcCmdTools.animationAssetReport(pc.Application.getApplication().assets.find('nameOfAsset.glb', 'animation'));
 ```
 
-**Incomplete**: Does not support cubic curves
+**Incomplete**: Does not support cubic curves.
+
 With the devtools open, a report of the animation timeline keyframes and transformation data can be printed out to console.
 
 This will show the node hierarchy path, the type of transformation, keyframe time and data.
