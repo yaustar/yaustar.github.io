@@ -42,3 +42,13 @@ Example output:
 ![](images/animation-asset-report.png)
 
 [editor-api-github]: https://github.com/playcanvas/editor-api
+
+### Code Editor (Monaco)
+
+#### Minimap Toggle
+
+Open the Command Palette and search for 'Toggle Minimap'.
+
+#### Theme
+
+Currently using Dracula (personal favourite theme) from https://github.com/brijeshb42/monaco-themes/tree/master/themes
