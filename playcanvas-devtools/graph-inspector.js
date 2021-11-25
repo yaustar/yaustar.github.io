@@ -3,43 +3,59 @@
     var pcGraphInspector = {};
 
     // Setup a container
-    pcGraphInspector.init = function() {
-        var container = new pcui.Container({
-            grid: true
+    pcGraphInspector.init = function () {
+        this.graphContainer = new pcui.Container({
+            grid: true,
+            resizable: 'right',
+            resizeMax: 1000,
         });
 
-        container.style.position = 'absolute';
-        container.style.left = '0px';
-        container.style.top = '0px';
-        container.style.height = '100%';
-        container.style.zIndex = 1000000;
+        this.graphContainer.style.position = 'absolute';
+        this.graphContainer.style.left = '0px';
+        this.graphContainer.style.top = '0px';
+        this.graphContainer.style.height = '100%';
+        this.graphContainer.style.width = '300px';
 
-        this.container = container;
+        this.graphContainer.style.zIndex = 1000000;
 
-        document.body.appendChild(container.dom);
+        document.body.appendChild(this.graphContainer.dom);
 
-        var ui = container.dom;
-
-        var panel = new pcui.Panel({
+        this.graphPanel = new pcui.Panel({
             flex: true,
             collapsible: true,
             collapsed: false,
             collapseHorizontally: true,
             removable: false,
             headerText: 'Inspector',
-            resizable: 'right',
             scrollable: true,
             resizeMax: 1000
         });
 
-        var content = panel.content;
-        panel.style.width = '300px';
+        this.graphExpandedItems = new Set();
 
-        panel.on('collapse', function () {});
+        this.graphPanel.style.width = '100%';
 
-        panel.on('expand', function () {});
+        this.addGraphContainerEvents();
 
-        container.append(panel);
+        this.graphContainer.append(this.graphPanel);
+
+        this.addGraphView(this.graphPanel);
+
+        // Delayed so that the canvas is resized correctly
+        // Doing on the first post render
+        setTimeout(function() {
+            this.onGraphContainerResize();
+        }.bind(this), 500);
+    };
+
+    // Expose API to hide/show the panel DOM
+    pcGraphInspector.show = function (show) {
+        this.container.hidden = !show;
+    };
+
+
+    pcGraphInspector.addGraphView = function (parentPanel) {
+        var self = this;
 
         // Add buttons to refresh the hierarchy
         var refreshHierarchyButton = new pcui.Button({
@@ -52,7 +68,7 @@
             filterTextInput.value = '';
         });
 
-        panel.append(refreshHierarchyButton);
+        parentPanel.append(refreshHierarchyButton);
 
         // Add a tick box to allow displaying graphnodes
         var showGraphNodesLabelGroup = new pcui.LabelGroup({
@@ -73,7 +89,7 @@
         });
 
         showGraphNodesLabelGroup.append(showGraphNodesTickbox);
-        panel.append(showGraphNodesLabelGroup);
+        parentPanel.append(showGraphNodesLabelGroup);
 
         // Filter text input
         var filterTextLabelGroup = new pcui.LabelGroup({
@@ -86,46 +102,41 @@
         var filterTextInput = new pcui.TextInput({});
 
         filterTextLabelGroup.append(filterTextInput);
-        panel.append(filterTextLabelGroup);
+        parentPanel.append(filterTextLabelGroup);
 
         filterTextInput.on('change', function (value) {
             _filterTree(value);
         });
 
-        panel.append(new pcui.Divider());
+        parentPanel.append(new pcui.Divider());
 
-        // Hierarchy tree
-        var hierarchyTreeView = new pcui.TreeView({
+        var defaultTreeViewOptions = {
             readOnly: true,
             allowDrag: false,
             allowRenaming: false,
             allowReordering: false
-        });
+        };
+
+        // Hierarchy tree
+        var hierarchyTreeView = new pcui.TreeView(defaultTreeViewOptions);
 
         hierarchyTreeView.on('select', function (item) {
             _printTreeItem(item);
         });
 
-        panel.append(hierarchyTreeView);
+        parentPanel.append(hierarchyTreeView);
 
         // Filter results tree view
-        var filterTreeView = new pcui.TreeView({
-            readOnly: true,
-            allowDrag: false,
-            allowRenaming: false,
-            allowReordering: false
-        });
+        var filterTreeView = new pcui.TreeView(defaultTreeViewOptions);
 
         filterTreeView.on('select', function (item) {
             _printTreeItem(item);
         });
 
-        panel.append(filterTreeView);
-
+        parentPanel.append(filterTreeView);
 
         showGraphNodes = false;
         _refreshHierarchy();
-
 
         function _printTreeItem(item) {
             var node = item.__node;
@@ -141,18 +152,29 @@
             console.log(item.__node);
         }
 
-
         function _refreshHierarchy() {
             filterTreeView.hidden = true;
             hierarchyTreeView.hidden = false;
 
             hierarchyTreeView.clearTreeItems();
 
-            _addEntitiesToTree(app.root, hierarchyTreeView);
+            var previousGraphExpandedItems = self.graphExpandedItems;
+            self.graphExpandedItems = new Set();
+            _addEntitiesToTree(app.root, hierarchyTreeView, previousGraphExpandedItems);
+            
+            previousGraphExpandedItems.clear();
         }
 
 
-        function _addEntitiesToTree(node, treeItem) {
+        function _onOpenItem() {
+            self.graphExpandedItems.add(this.__node);
+        }
+
+        function _onCloseItem() {
+            self.graphExpandedItems.delete(this.__node);   
+        }
+
+        function _addEntitiesToTree(node, treeItem, itemsToExpand) {
             if (showGraphNodes || node instanceof pc.Entity) {
                 // Append itself to the tree
                 var newItem = new pcui.TreeViewItem({
@@ -164,13 +186,19 @@
 
                 treeItem.append(newItem);
 
+                newItem.on('open', _onOpenItem);
+                newItem.on('close', _onCloseItem);
+
                 // Recursively add children
                 for (var i = 0; i < node.children.length; ++i) {
-                    _addEntitiesToTree(node.children[i], newItem);
+                    _addEntitiesToTree(node.children[i], newItem, itemsToExpand);
                 }
+
+                if (itemsToExpand.has(node)) {
+                    newItem.open = true;
+                } 
             }
         }
-
 
         function _filterTree(filterCode) {
             if (filterCode.length === 0) {
@@ -208,11 +236,37 @@
                 _refreshHierarchy();
             }
         }
-    }
+    };
 
-    // Expose API to hide/show the panel DOM
-    pcGraphInspector.show = function (show) {
-        this.container.hidden = !show;
+
+    // Events
+    pcGraphInspector.addGraphContainerEvents = function () {
+        this.graphPanel.on('collapse', this.onGraphPanelCollapse.bind(this));
+        this.graphPanel.on('expand', this.onGraphContainerResize.bind(this));
+        this.graphContainer.on('resize', this.onGraphContainerResize.bind(this));
+
+        window.addEventListener('resize', this.onGraphContainerResize.bind(this));
+    };
+
+
+    pcGraphInspector.onGraphPanelCollapse = function () {
+        if (app.fillMode === pc.FILLMODE_FILL_WINDOW) {
+            var canvas = app.graphicsDevice.canvas;
+            canvas.style.left = '32px';
+            canvas.style.width = (window.innerWidth - 32).toString() + 'px';
+        }
+    };
+
+    pcGraphInspector.onGraphContainerResize = function () {
+        // Check what fillmode are we in. On do canvas resizing if fill mode is 
+        // filling the whole window
+        if (app.fillMode === pc.FILLMODE_FILL_WINDOW) {
+            var canvas = app.graphicsDevice.canvas;
+            var width = this.graphContainer.width;
+            canvas.style.left = width.toString() + 'px';
+
+            canvas.style.width = (window.innerWidth - width).toString() + 'px';
+        }
     };
 
     window.pcGraphInspector = pcGraphInspector;
