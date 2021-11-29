@@ -193,7 +193,7 @@ var __pcDevtoolsConstruct__ = function (baseUrl, app, window) {
                     pcDevtools.init();
                     pcGraphInspector.init();
 
-                    stopPropagatingInputEvents(pcGraphInspector.container.dom);
+                    stopPropagatingInputEvents(pcGraphInspector.graphContainer.dom);
 
                     // Load the ministats
                     var ministats = new pc.MiniStats(app);
