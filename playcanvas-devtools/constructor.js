@@ -7,6 +7,7 @@ var __pcDevtoolsConstruct__ = function (baseUrl, app, window) {
 
                 if (!window.pcui) {
                     scriptFilenames.push('libs/pcui.js');
+                    scriptFilenames.push('libs/observer.js');
                 }
 
                 if (!pc.MiniStats) {
