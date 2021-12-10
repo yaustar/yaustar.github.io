@@ -506,11 +506,10 @@
         // Boolean
         var createBoolean = function (labelName, parent) {
             var labelGroup = new pcui.LabelGroup({
-                text: labelName,
-                flexShrink: 0
+                text: labelName
             });
 
-            labelGroup.label.width = 100;
+            labelGroup.label.width = 250;
 
             var boolInput = new pcui.BooleanInput({
                 width: 20,
@@ -705,6 +704,8 @@
                 }
             }
 
+
+            // Refresh when scripts are removed/added
 
             // Anim component
             // Parameters state, playable

@@ -201,6 +201,13 @@ var __pcDevtoolsConstruct__ = function (baseUrl, app, window) {
                     // Load dat gui
                     datgui = new dat.GUI();
                     datgui.domElement.style.zIndex = 1000000;
+
+                    // Move to center
+                    datgui.domElement.style.position = 'absolute';
+                    datgui.domElement.style.top = '0px';
+                    datgui.domElement.style.left = ((window.innerWidth / 2) - 150) + 'px';
+                    datgui.domElement.style.width = '300px';
+
                     stopPropagatingInputEvents(datgui.domElement);
 
                     // Force update values
