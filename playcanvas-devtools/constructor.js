@@ -6,8 +6,8 @@ var __pcDevtoolsConstruct__ = function (baseUrl, app, window) {
                 var scriptFilenames = [];
 
                 if (!window.pcui) {
-                    scriptFilenames.push('libs/pcui.js');
                     scriptFilenames.push('libs/observer.js');
+                    scriptFilenames.push('libs/pcui.js');
                 }
 
                 if (!pc.MiniStats) {
@@ -251,18 +251,21 @@ var __pcDevtoolsConstruct__ = function (baseUrl, app, window) {
                     assetToolsFolder.add(dummyObj.assetTools, 'listNonPreloadedAssets');
                 };
 
-                var scriptsLoaded = 0;
-                for (var i = 0; i < scriptFilenames.length; ++i) {
+                var loadScript = function(index, callback) {
                     var imported = document.createElement('script');
-                    imported.src = baseUrl + scriptFilenames[i];
+                    imported.type = 'text/javascript';
+                    imported.src = baseUrl + scriptFilenames[index];
                     imported.onload = function () {
-                        scriptsLoaded += 1;
-                        if (scriptsLoaded == scriptFilenames.length) {
+                        if (index === scriptFilenames.length - 1) {
                             callback();
+                        } else {
+                            loadScript(index + 1, callback);
                         }
                     };
                     document.head.appendChild(imported);
                 }
+
+                loadScript(0, callback);
 
                 __addedDebugTools__ = true;
             }
