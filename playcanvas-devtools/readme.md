@@ -41,7 +41,7 @@ This will show a treeview of the current hierarchy in the scene and also allows 
 ![Print graph menu](images/graph-inspector-menu.png)
 
 `Refresh` button updates the tree view to the current state of the scene.
-`Show Graph Nodes` tickbox will also show graph nodes in the tree view when `Refresh is pressed.
+`Show Graph Nodes` tickbox will also show graph nodes in the tree view when `Refresh` is pressed.
 `Filter` allows you to add use the conditional in the filterString to print out where `node` represents the node to filter.
 
 e.g.
