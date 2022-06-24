@@ -12,7 +12,7 @@ More detailed instructions on how to create a bookmarklet can be [found here](ht
 
 ## As part of a project
 
-If you would like to have this as a 'allows on' feature of your PlayCanvas project, you can create a new script file in the project and have it's contents as follows:
+If you would like to have this as a 'always on' feature of your PlayCanvas project, you can create a new script file in the project and have it's contents as follows:
 
 ```
 (function(){
