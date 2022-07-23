@@ -128,10 +128,36 @@
 
         let mousedownX = 0;
         let mousedownY = 0;
+        let mousedownTimeStamp = 0;
 
         app.mouse.on('mousedown', (e) => {
+            const oldX = mousedownX;
+            const oldY = mousedownY;
+            const oldTimeStamp = mousedownTimeStamp;
+
             mousedownX = e.x;
             mousedownY = e.y;
+            mousedownTimeStamp = Date.now();
+
+            // Check for double click option on right mouse so we can
+            // walk up the parents as quick shortcut
+            if (e.button === pc.MOUSEBUTTON_RIGHT) {
+                if (Math.abs(oldX - e.x) < 5 || Math.abs(oldY - e.y) < 5) {
+                    if (Date.now() - oldTimeStamp < 250) {
+                        const items = editor.selection.items;
+                        if (items.length === 1 && items[0] instanceof api.Entity) {
+                            const parent = items[0].parent;
+                            if (parent) {
+                                editor.selection.set([parent]);
+
+                                // Don't have the context menu show up
+                                mousedownX = Number.MAX_VALUE;
+                                mousedownY = Number.MAX_VALUE;
+                            }
+                        }
+                    }
+                }
+            }
         });
 
         app.mouse.on('mouseup', (e) => {
