@@ -10,6 +10,7 @@ Assuming you are using Chrome:
 1. Install Violent Monkey Chrome extension: https://violentmonkey.github.io/
 2. Open the URLs to install the script:
     - https://yaustar.github.io/playcanvas-editor-api-tools/editor-utils.user.js
+    - https://yaustar.github.io/playcanvas-editor-api-tools/code-editor-utils.user.js
     - https://yaustar.github.io/playcanvas-editor-api-tools/launch-tab-utils.user.js
 3. Done!
 
@@ -17,13 +18,34 @@ Assuming you are using Chrome:
 
 ### In Editor
 
-#### Right click hierarchy menu
+A right click context menu in the 3D viewport
+
+![](images/editor-context-menu.jpg)
+
+#### Hierarchy Menu
 
 A context menu in the 3D viewport to make it easier to select entities in the viewport, especially if the render mesh is a child of the entity that has the physics collision and/or logic.
 
 Right clicking on the viewport when one entity is selected will give a list of the selected entity parents. Clicking on any of these entries will select that entity.
 
 ![](images/right-click-hierarchy-menu.gif)
+
+#### Load GLB for selected Entity
+
+This loads the GLB model for the current selected Entity to allow you to see it at Editor time. 
+
+It doesn't add it to hierarchy in the Editor and therefore, you can't select it, modify it etc.
+
+Explicitly designed to be used with the scripts in the [Load GLB project example](https://developer.playcanvas.com/en/tutorials/loading-gltf-glbs/).
+
+![](images/load-glb-single.gif)
+
+#### Load all GLBs in the scene
+
+Same restrictions as 'Load GLB for selected Entity' but does it for all the Entities in the scene. Warning: Can be slow on large scenes as it has to go through every Entity.
+
+![](images/load-all-glbs.gif)
+
 
 ### Launch Tab
 
