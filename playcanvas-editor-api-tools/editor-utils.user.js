@@ -22,7 +22,7 @@
 
         const glbEntityName = '8556102755';
 
-        const loadGlbContainerFromAsset = function (glbBinAsset, options, assetName, callback) {
+        const loadGlbContainerFromAsset = (glbBinAsset, options, assetName, callback) => {
             var onAssetReady = function (asset) {
                 var blob = new Blob([asset.resource]);
                 var data = URL.createObjectURL(blob);
@@ -36,7 +36,7 @@
             app.assets.load(glbBinAsset);
         };
 
-        const loadGlbContainerFromUrl = function (url, options, assetName, callback) {
+        const loadGlbContainerFromUrl = (url, options, assetName, callback) => {
             var filename = assetName + '.glb';
             var file = {
                 url: url,
@@ -56,7 +56,7 @@
             return asset;
         };
 
-        const createGlbEntity = function (editorEntity) {
+        const createGlbEntity = (editorEntity) => {
             const scripts = editorEntity.get('components.script.scripts');
             if (scripts && (scripts.loadGlbAsset || scripts.loadGlbUrl)) {
                 const guid = editorEntity.get('resource_id');
@@ -116,6 +116,16 @@
             }
         }
 
+        const createGlbsAll = () => {
+            if (confirm('This can take a long time as we have to check every entity. Are you sure?')) {
+                const entities = editor.entities.list();
+                for (let i = 0; i < entities.length; i++) {
+                    const entity = entities[i];
+                    createGlbEntity(entity);
+                }
+            }
+        };
+
         let mousedownX = 0;
         let mousedownY = 0;
 
@@ -126,26 +136,22 @@
 
         app.mouse.on('mouseup', (e) => {
             // Did we move the mouse while holding mouse button
-            let mouseMoved = false;
             if (Math.abs(mousedownX - e.x) > 5 || Math.abs(mousedownY - e.y) > 5) {
-                mouseMoved = true;
+                return;
             }
 
             if (e.button === pc.MOUSEBUTTON_RIGHT) {
+                const items = editor.selection.items;
+                const menuItems = [];
+
                 if (menu) {
                     root.remove(menu);
                     menu = null;
                 }
-
-                if (mouseMoved) {
-                    return;
-                }
-
-                const items = editor.selection.items;
+                
                 if (items.length === 1 && items[0] instanceof api.Entity) {
                     const selectedEntity = items[0];
-                    // Build the context menu
-                    const menuItems = [];
+                    const scripts = selectedEntity.get('components.script.scripts');
 
                     let parent = items[0].parent;
                     let menuIndex = 1;
@@ -156,7 +162,7 @@
                         const entryTitle = menuIndex.toString() + ': ' + entityName;
                         parentEntityItems.push({
                             text: entryTitle,
-                            onSelect: function () {
+                            onSelect: () => {
                                 editor.selection.set([entityTarget]);
                             }
                         });
@@ -165,18 +171,31 @@
                         menuIndex += 1;
                     }
 
-                    menuItems.push({
-                        text: 'Select Parent',
-                        items: parentEntityItems
-                    });
+                    if (parentEntityItems.length > 0) {
+                        menuItems.push({
+                            text: '👨‍👩‍👧 Select Parent',
+                            items: parentEntityItems
+                        });
+                    }
 
-                    menuItems.push({
-                        text: 'Load GLB',
-                        onSelect: function() {
-                            createGlbEntity(selectedEntity)
-                        }
-                    });
+                    if (scripts && (scripts.loadGlbAsset || scripts.loadGlbUrl)) {
+                        menuItems.push({
+                            text: '🏠 Load GLB on Entity',
+                            onSelect: () => {
+                                createGlbEntity(selectedEntity)
+                            }
+                        });
+                    }
+                }
 
+                menuItems.push({
+                    text: '🏘 Load all GBLs ❗️',
+                    onSelect: () => {
+                        createGlbsAll();
+                    }
+                });
+
+                if (menuItems.length > 0) {
                     const menuArgs = {
                         items: menuItems,
                     };
@@ -189,10 +208,10 @@
                         menu.hidden = false;
                         menu.position(e.event.clientX + 1, e.event.clientY);
                     });
-
-                    e.event.preventDefault();
-                    e.event.stopPropagation();
                 }
+
+                e.event.preventDefault();
+                e.event.stopPropagation();
             }
         });
     };
