@@ -116,11 +116,29 @@
             }
         }
 
-        app.mouse.on('mousedown', function (e) {
+        let mousedownX = 0;
+        let mousedownY = 0;
+
+        app.mouse.on('mousedown', (e) => {
+            mousedownX = e.x;
+            mousedownY = e.y;
+        });
+
+        app.mouse.on('mouseup', (e) => {
+            // Did we move the mouse while holding mouse button
+            let mouseMoved = false;
+            if (Math.abs(mousedownX - e.x) > 5 || Math.abs(mousedownY - e.y) > 5) {
+                mouseMoved = true;
+            }
+
             if (e.button === pc.MOUSEBUTTON_RIGHT) {
                 if (menu) {
                     root.remove(menu);
                     menu = null;
+                }
+
+                if (mouseMoved) {
+                    return;
                 }
 
                 const items = editor.selection.items;
@@ -131,11 +149,12 @@
 
                     let parent = items[0].parent;
                     let menuIndex = 1;
+                    const parentEntityItems = [];
                     while (parent) {
                         const entityTarget = parent;
                         const entityName = entityTarget.get('name');
                         const entryTitle = menuIndex.toString() + ': ' + entityName;
-                        menuItems.push({
+                        parentEntityItems.push({
                             text: entryTitle,
                             onSelect: function () {
                                 editor.selection.set([entityTarget]);
@@ -145,6 +164,11 @@
                         parent = parent.parent;
                         menuIndex += 1;
                     }
+
+                    menuItems.push({
+                        text: 'Select Parent',
+                        items: parentEntityItems
+                    });
 
                     menuItems.push({
                         text: 'Load GLB',
@@ -174,7 +198,6 @@
     };
 
     // Wait for the PlayCanvas application to be loaded
-
     const intervalId = setInterval(function () {
         if (pc.Application.getApplication()) {
             onEngineLoaded();
