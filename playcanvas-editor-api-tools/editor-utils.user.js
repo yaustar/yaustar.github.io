@@ -22,6 +22,66 @@
 
         const glbEntityName = '8556102755';
 
+        // check for wasm module support
+        const wasmSupported = () => {
+            try {
+                if (typeof WebAssembly === "object" && typeof WebAssembly.instantiate === "function") {
+                    const module = new WebAssembly.Module(Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00));
+                    if (module instanceof WebAssembly.Module)
+                        return new WebAssembly.Instance(module) instanceof WebAssembly.Instance;
+                }
+            } catch (e) { }
+            return false;
+        };
+
+        // load a script
+        const loadScriptAsync = (url, doneCallback) => {
+            var tag = document.createElement('script');
+            tag.onload = function () {
+                doneCallback();
+            };
+            tag.onerror = function () {
+                throw new Error('failed to load ' + url);
+            };
+            tag.async = true;
+            tag.src = url;
+            tag.crossOrigin = 'anonymous';
+            document.head.appendChild(tag);
+        };
+
+        // load and initialize a wasm module
+        const loadWasmModuleAsync = (moduleName, jsUrl, binaryUrl, doneCallback) => {
+            loadScriptAsync(jsUrl, function () {
+                var lib = window[moduleName];
+                window[moduleName + 'Lib'] = lib;
+                lib({
+                    locateFile: function () {
+                        return binaryUrl;
+                    }
+                }).then(function (instance) {
+                    window[moduleName] = instance;
+                    doneCallback();
+                });
+            });
+        };
+
+        const loadDracoWasm = () => {
+            if (wasmSupported()) {
+                loadWasmModuleAsync(
+                    "DracoDecoderModule",
+                    "https://yaustar.github.io/playcanvas-editor-api-tools/libs/draco.wasm.js",
+                    "https://yaustar.github.io/playcanvas-editor-api-tools/libs/draco.wasm.wasm",
+                    () => {
+                        alert('Loaded Draco WASM');
+                    }
+                );
+            } else {
+                loadWasmModuleAsync("DracoDecoderModule", "https://yaustar.github.io/playcanvas-editor-api-tools/libs/draco.js", "", () => {
+                    alert('Loaded Draco WASM');
+                });
+            }
+        };
+
         const loadGlbContainerFromAsset = (glbBinAsset, options, assetName, callback) => {
             var onAssetReady = function (asset) {
                 var blob = new Blob([asset.resource]);
@@ -97,7 +157,7 @@
                     if (scripts.loadGlbUrl) {
                         const url = scripts.loadGlbUrl.attributes.glbUrl;
                         if (url) {
-                            const filename = url.substring(url.lastIndexOf('/')+1);
+                            const filename = url.substring(url.lastIndexOf('/') + 1);
                             loadGlbContainerFromUrl(url, null, filename, function (err, asset) {
                                 if (err) {
                                     console.error(err);
@@ -174,7 +234,7 @@
                     root.remove(menu);
                     menu = null;
                 }
-                
+
                 if (items.length === 1 && items[0] instanceof api.Entity) {
                     const selectedEntity = items[0];
                     const scripts = selectedEntity.get('components.script.scripts');
@@ -220,6 +280,15 @@
                         createGlbsAll();
                     }
                 });
+
+                if (!window.DracoDecoderModule) {
+                    menuItems.push({
+                        text: '🗜 Load Draco WASM',
+                        onSelect: () => {
+                            loadDracoWasm();
+                        }
+                    });
+                }
 
                 if (menuItems.length > 0) {
                     const menuArgs = {
