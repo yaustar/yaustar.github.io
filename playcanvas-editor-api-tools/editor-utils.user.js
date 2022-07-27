@@ -20,7 +20,7 @@
         let menu = null;
         const root = editor.call('layout.root');
 
-        const glbEntityName = '8556102755';
+        const loadedGlbs = {};
 
         // check for wasm module support
         const wasmSupported = () => {
@@ -97,6 +97,8 @@
                 return dracoWasmAsset;
             }
 
+            console.log('Looking for Draco WASM in project');
+
             const dracoModules = editor.assets.filter((asset) => { return asset.get('type') === 'wasm' && asset.get('data').moduleName === 'DracoDecoderModule' });
             if (dracoModules.length > 0) {
                 dracoWasmAsset = dracoModules[0];
@@ -145,14 +147,8 @@
                 const guid = editorEntity.get('resource_id');
                 const viewEntity = app.root.findByGuid(guid);
 
-                // Check if a GLB entity has already been created 
-                let alreadyLoaded = false;
-                const viewEntityChildren = viewEntity.children;
-                for (let i = 0; i < viewEntityChildren.length; ++i) {
-                    if (viewEntityChildren[i].name === glbEntityName) {
-                        alreadyLoaded = true;
-                    }
-                }
+                // Check if a GLB entity has already been created
+                const alreadyLoaded = loadedGlbs[guid] != null;
 
                 if (alreadyLoaded) {
                     console.log('Already loaded a GLB');
@@ -169,8 +165,9 @@
                                 }
 
                                 const renderRootViewEntity = asset.resource.instantiateRenderEntity();
-                                renderRootViewEntity.name = glbEntityName;
                                 renderRootViewEntity.reparent(viewEntity);
+
+                                loadedGlbs[guid] = renderRootViewEntity.getGuid();
 
                                 console.log('Loaded GLB: ' + asset.name);
                             });
@@ -188,8 +185,9 @@
                                 }
 
                                 const renderRootViewEntity = asset.resource.instantiateRenderEntity();
-                                renderRootViewEntity.name = glbEntityName;
                                 renderRootViewEntity.reparent(viewEntity);
+
+                                loadedGlbs[guid] = renderRootViewEntity.getGuid();
 
                                 console.log('Loaded GLB: ' + asset.name);
                             });
@@ -291,7 +289,9 @@
                         menuItems.push({
                             text: '🏠 Load GLB on Entity',
                             onSelect: () => {
-                                createGlbEntity(selectedEntity)
+                                checkForAndloadDracoWasm(() => {
+                                    createGlbEntity(selectedEntity);
+                                });
                             }
                         });
                     }
@@ -300,18 +300,11 @@
                 menuItems.push({
                     text: '🏘 Load all GBLs ❗️',
                     onSelect: () => {
-                        createGlbsAll();
+                        checkForAndloadDracoWasm(() => {
+                            createGlbsAll();
+                        });
                     }
                 });
-
-                if (!window.DracoDecoderModule) {
-                    menuItems.push({
-                        text: '🗜 Load Draco WASM',
-                        onSelect: () => {
-                            checkForAndloadDracoWasm(() => {alert('done')});
-                        }
-                    });
-                }
 
                 if (menuItems.length > 0) {
                     const menuArgs = {
