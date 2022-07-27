@@ -65,22 +65,45 @@
             });
         };
 
-        const loadDracoWasm = () => {
-            if (wasmSupported()) {
-                loadWasmModuleAsync(
-                    "DracoDecoderModule",
-                    "https://yaustar.github.io/playcanvas-editor-api-tools/libs/draco.wasm.js",
-                    "https://yaustar.github.io/playcanvas-editor-api-tools/libs/draco.wasm.wasm",
-                    () => {
-                        alert('Loaded Draco WASM');
-                    }
-                );
+        const checkForAndloadDracoWasm = (callback) => {
+            const wasmAsset = getDracoWasmAsset(); 
+
+            if (wasmAsset) {
+                const baseUrl = 'https://playcanvas.com';
+                const wasmUrl = baseUrl + wasmAsset.get('file').url;
+                const glueUrl = baseUrl + editor.assets.get(wasmAsset.get('data').glueScriptId).get('file').url;
+                const fallbackUrl = baseUrl + editor.assets.get(wasmAsset.get('data').fallbackScriptId).get('file').url;
+
+                if (wasmSupported()) {
+                    loadWasmModuleAsync(
+                        wasmAsset.get('data').moduleName,
+                        glueUrl,
+                        wasmUrl,
+                        callback
+                    );
+                } else {
+                    loadWasmModuleAsync(wasmAsset.get('data').moduleName, fallbackUrl, "", callback);
+                }
             } else {
-                loadWasmModuleAsync("DracoDecoderModule", "https://yaustar.github.io/playcanvas-editor-api-tools/libs/draco.js", "", () => {
-                    alert('Loaded Draco WASM');
-                });
+                callback();
             }
         };
+
+        let dracoWasmAsset = undefined;
+    
+        const getDracoWasmAsset = () => {
+            // Cache the result as we don't want to do this more than once
+            if (dracoWasmAsset !== undefined) {
+                return dracoWasmAsset;
+            }
+
+            const dracoModules = editor.assets.filter((asset) => { return asset.get('type') === 'wasm' && asset.get('data').moduleName === 'DracoDecoderModule' });
+            if (dracoModules.length > 0) {
+                dracoWasmAsset = dracoModules[0];
+            }
+     
+            return dracoWasmAsset;
+        }
 
         const loadGlbContainerFromAsset = (glbBinAsset, options, assetName, callback) => {
             var onAssetReady = function (asset) {
@@ -285,7 +308,7 @@
                     menuItems.push({
                         text: '🗜 Load Draco WASM',
                         onSelect: () => {
-                            loadDracoWasm();
+                            checkForAndloadDracoWasm(() => {alert('done')});
                         }
                     });
                 }
