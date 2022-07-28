@@ -306,6 +306,8 @@
                     }
                 });
 
+                app.fire('editor:ubertools:beforeaddmenuitems', menuItems);
+
                 if (menuItems.length > 0) {
                     const menuArgs = {
                         items: menuItems,
