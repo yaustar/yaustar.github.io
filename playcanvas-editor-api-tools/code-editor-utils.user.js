@@ -32,7 +32,6 @@
     const codeEditorPoll = setInterval(function () {
         const m = editor.call('editor:monaco');
         if (m) {
-            loadTheme(m);
             addCustomKeymap(m);
             clearInterval(codeEditorPoll);
         }
