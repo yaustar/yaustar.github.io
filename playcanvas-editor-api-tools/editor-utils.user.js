@@ -9,7 +9,6 @@
 // @grant        none
 // ==/UserScript==
 
-
 (function () {
     'use strict';
     const logCssStyle = 'color: white; background-color: #8e44ad';
@@ -66,7 +65,7 @@
         };
 
         const checkForAndloadDracoWasm = (callback) => {
-            const wasmAsset = getDracoWasmAsset(); 
+            const wasmAsset = getDracoWasmAsset();
 
             if (wasmAsset) {
                 const baseUrl = 'https://playcanvas.com';
@@ -90,7 +89,7 @@
         };
 
         let dracoWasmAsset = undefined;
-    
+
         const getDracoWasmAsset = () => {
             // Cache the result as we don't want to do this more than once
             if (dracoWasmAsset !== undefined) {
@@ -103,7 +102,7 @@
             if (dracoModules.length > 0) {
                 dracoWasmAsset = dracoModules[0];
             }
-     
+
             return dracoWasmAsset;
         }
 
@@ -327,6 +326,10 @@
                 e.event.stopPropagation();
             }
         });
+
+        window.yauEditorTools = {
+            loadScriptAsync: loadScriptAsync
+        }
     };
 
     // Wait for the PlayCanvas application to be loaded
