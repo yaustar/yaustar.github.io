@@ -12,6 +12,7 @@ Assuming you are using Chrome:
     - https://yaustar.github.io/playcanvas-editor-api-tools/editor-utils.user.js
     - https://yaustar.github.io/playcanvas-editor-api-tools/code-editor-utils.user.js
     - https://yaustar.github.io/playcanvas-editor-api-tools/launch-tab-utils.user.js
+    - https://yaustar.github.io/playcanvas-editor-api-tools/project-skybox.user.js (requires editor-utils.user.js to be installed)
 3. Done!
 
 ## Tools
@@ -46,6 +47,15 @@ Same restrictions as 'Load GLB for selected Entity' but does it for all the Enti
 
 ![](images/load-all-glbs.gif)
 
+#### Projected Skybox
+
+Requires `editor-utils.user.js` to be installed.
+
+This is an additional script to be used with the following project: https://playcanvas.com/project/985028/overview/projective-skybox
+
+The project projects the skybox onto geometry creating a more 'grounded' and realistic look to the scene via a custom shader.
+
+![](images/projected-skybox.gif)
 
 ### Launch Tab
 
