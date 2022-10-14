@@ -55,6 +55,8 @@ This is an additional script to be used with the following project: https://play
 
 The project projects the skybox onto geometry creating a more 'grounded' and realistic look to the scene via a custom shader.
 
+The option is only available when the entity that has the script `project-skybox-chunks.js` attached is selected.
+
 ![](images/projected-skybox.gif)
 
 ### Launch Tab
