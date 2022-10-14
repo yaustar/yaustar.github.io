@@ -12,7 +12,7 @@ Assuming you are using Chrome:
     - https://yaustar.github.io/playcanvas-editor-api-tools/editor-utils.user.js
     - https://yaustar.github.io/playcanvas-editor-api-tools/code-editor-utils.user.js
     - https://yaustar.github.io/playcanvas-editor-api-tools/launch-tab-utils.user.js
-    - https://yaustar.github.io/playcanvas-editor-api-tools/project-skybox.user.js (requires editor-utils.user.js to be installed)
+    - https://yaustar.github.io/playcanvas-editor-api-tools/projected-skybox.user.js (requires editor-utils.user.js to be installed)
 3. Done!
 
 ## Tools
