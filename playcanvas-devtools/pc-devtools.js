@@ -91,27 +91,6 @@
         evt.event.preventDefault();
     };
 
-
-    pcDevtools.debugEntityName = '__devtools__';
-    pcDevtools.addScriptTypeToDebugEntity = function (entityName, scriptName, data) {
-        var app = pcDevtools.app;
-        var debugEntity = app.root.findByName(entityName);
-        if (!debugEntity) {
-            debugEntity = new pc.Entity();
-            debugEntity.addComponent('script');
-            app.root.addChild(debugEntity);
-        }
-
-        var scriptInstance = debugEntity.script[scriptName];
-        if (!scriptInstance) {
-            scriptInstance = debugEntity.script.create(scriptName, {
-                attributes: data
-            });
-        }
-
-        return scriptInstance;
-    };
-
     pcDevtools.assetTools = {};
     pcDevtools.assetTools.printAssetList = function (assets) {
         var regexString = '\\b(?:';

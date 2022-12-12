@@ -30,9 +30,12 @@ Shows the CPU, GPU and total frame time in ms. Can be enabled/disabled via the m
 ![Mini Stats menu](images/ministats-menu.jpg)
 
 ## Physics debug renderer
-Render physics volumes in the scene. Requires the script to be added to the scene first by clicking on `addPhysicsDebug`.
+Render physics volumes in the scene. Requires initialisation first by clicking on `addPhysicsDebug`.
 
 ![Physics menu](images/physics-menu.jpg)
+
+This adds new options to enable/disable the rendering and more.
+
 ![Physics menu expanded](images/physics-expanded-menu.jpg)
 
 ## Graph Inspector
@@ -102,6 +105,6 @@ Quick buttons to list all the assets that are preloaded or not preloaded in the 
 # Tool authors
 
 * dataarts's dat.gui [Apache 2.0](https://github.com/dataarts/dat.gui/blob/master/LICENSE)
-* PlayCanvas Will's Debug physics renderer [MIT](https://github.com/playcanvas/engine/blob/master/LICENSE)
 * PlayCanvas Donovan's ministats [MIT](https://github.com/playcanvas/engine/blob/master/LICENSE)
 * PlayCanvas PCUI [MIT](https://github.com/playcanvas/engine/blob/master/LICENSE)
+* Modified LeXXik's [Ammo Debug Drawer](https://github.com/LeXXik/ammo-debug-drawer/blob/main/LICENSE)

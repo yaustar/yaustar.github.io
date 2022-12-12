@@ -53,17 +53,15 @@ var __pcDevtoolsConstruct__ = function (baseUrl, app, window) {
                     }
 
                     // Add the physics debugger
-                    var debugPhysics = pcDevtools.addScriptTypeToDebugEntity('__debugPhysics__', '__debugPhysics__', {
-                        drawShapes: true,
-                        opacity: 0.5,
-                        castShadows: false
+                    dummyObj.physicsDebugRenderer = new AmmoDebugDrawer({
+                        layer: app.scene.layers.getLayerById(pc.LAYERID_WORLD)
                     });
 
+                    dummyObj.physicsDebugRenderer.enabled = true;
+
                     debugPhysicsFolder = datgui.addFolder('Physics');
-                    debugPhysicsFolder.add(dummyObj, 'addPhysicsDebugger');
-                    debugPhysicsFolder.add(debugPhysics, 'drawShapes');
-                    debugPhysicsFolder.add(debugPhysics, 'opacity', 0, 1);
-                    debugPhysicsFolder.add(debugPhysics, 'castShadows');
+                    debugPhysicsFolder.add(dummyObj.physicsDebugRenderer, 'enabled');
+                    debugPhysicsFolder.add(dummyObj.physicsDebugRenderer, 'depthTest');
                 };
 
                 var refreshActiveCameras = function (obj) {

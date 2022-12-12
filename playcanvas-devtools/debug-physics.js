@@ -1,228 +1,270 @@
-var DebugPhysics = pc.createScript('__debugPhysics__');
+/**
+ * Ammo Debug Drawer 1.0.1
+ * by LeXXik, MIT
+ *
+ * Draws the current state of the Ammo's dynamics world.
+ *
+ *
+ *  How to use:
+ *
+ *      const renderer = new AmmoDebugDrawer();
+ *      renderer.enabled = true; // false
+ *
+ *      API
+ *
+ *   -  // Toggle drawing on/off:
+ *      renderer.toggle();
+ *
+ *   -  // Change the draw mode:
+ *      //      0: Disable
+ *      //      1: Wireframe
+ *      //      2: Bounding Boxes   (default)
+ *      //      3: Wireframe + AABB
+ *      //      8: Contact Points
+ *      renderer.mode = 4;
+ *
+ *   -  // Optionally limit the drawing distance around an entity (in meters):
+ *      const renderer = new AmmoDebugDrawer({
+ *          limit: {
+ *              entity: cameraEntity,       // An entity around which to draw
+ *
+ *              distance: 30                // Radius around the entity; vertices beyond that distance will be ignored,
+ *
+ *              ignorePartials: false       // If true, the lines that are only partially in range will be ignored (default: false)
+ *          }
+ *      });
+ *
+ *   -  // Optionally specify which scene layer to draw to:
+ *      const renderer = new AmmoDebugDrawer({ layer: myLayer });   // Should be of type pc.Layer (defaults to UI layer)
+ */
 
-DebugPhysics.attributes.add('drawShapes', {
-    type: 'boolean',
-    default: false,
-    title: 'Draw Shapes',
-    description: 'Draw representations of physics collision shapes'
-});
-DebugPhysics.attributes.add('opacity', {
-    type: 'number',
-    default: 0.5,
-    min: 0,
-    max: 1,
-    title: 'Opacity',
-    description: 'Opacity of physics collision shapes'
-});
-DebugPhysics.attributes.add('castShadows', {
-    type: 'boolean',
-    default: true,
-    title: 'Cast Shadows',
-    description: 'Cast shadows from physics collision shapes'
-});
 
-// initialize code called once per entity
-DebugPhysics.prototype.initialize = function () {
-    // Handle attribute change events
-    this.on('attr:castShadows', function (value, prev) {
-        this.debugRoot.children.forEach(function (child) {
-            child.model.castShadows = value;
-        });
-    }, this);
-    this.on('attr:opacity', function (value, prev) {
-        this.debugRoot.children.forEach(function (child) {
-            child.model.meshInstances.forEach(function (meshInstance) {
-                var material = meshInstance.material;
-                material.opacity = value;
-                material.update();
-            });
-        }, this);
-    }, this);
 
-    this.debugRoot = new pc.Entity('Physics Debug Root');
-    this.app.root.addChild(this.debugRoot);
 
-    // Handle script enable/disable events
-    this.on('enable', function () {
-        this.debugRoot = new pc.Entity('Physics Debug Root');
-        this.app.root.addChild(this.debugRoot);
-    });
+class AmmoDebugDrawer {
 
-    this.on('disable', function () {
-        var collisionComponents = this.app.root.findComponents('collision');
-        collisionComponents.forEach(function (collision) {
-            if (collision.hasOwnProperty('_debugShape')) {
-                delete collision._debugShape;
-            }
-        });
-        this.debugRoot.destroy();
-    });
-};
-
-DebugPhysics.prototype.createModel = function (mesh, material) {
-    var node = new pc.GraphNode();
-    var meshInstance = new pc.MeshInstance(node, mesh, material);
-    var model = new pc.Model();
-    model.graph = node;
-    model.meshInstances = [meshInstance];
-    return model;
-};
-
-DebugPhysics.prototype.postUpdate = function (dt) {
-    // For any existing debug shapes, mark them as not updated (yet)
-    this.debugRoot.children.forEach(function (child) {
-        child.updated = false;
-    });
-
-    if (this.drawShapes) {
-        // For each collision component, update its debug shape (creating one
-        // if one does not exist)
-        var collisionComponents = this.app.root.findComponents('collision');
-        collisionComponents.forEach(function (collision) {
-            if (collision.enabled && collision.entity.enabled) {
-                var deleteShape = false;
-
-                // If the type or shape of the collision components has changed, recreate the visuals
-                if (collision._debugShape) {
-                    if (collision._debugShape._collisionType !== collision.type) {
-                        deleteShape = true;
-                    } else {
-                        switch (collision.type) {
-                            case 'box':
-                                if (!collision._debugShape._halfExents.equals(collision.halfExtents)) {
-                                    deleteShape = true;
-                                }
-                                break;
-                            case 'cone':
-                            case 'cylinder':
-                            case 'capsule':
-                                if (collision._debugShape._height !== collision.height || collision._debugShape._radius !== collision.radius) {
-                                    deleteShape = true;
-                                }
-                                break;
-                            case 'sphere':
-                                if (collision._debugShape._radius !== collision.radius) {
-                                    deleteShape = true;
-                                }
-                                break;
-                        }
-                    }
-                }
-
-                if (deleteShape) {
-                    collision._debugShape.destroy();
-                    delete collision._debugShape;
-                }
-
-                // No accompanying debug render shape for this collision component so create one
-                if (!collision._debugShape) {
-                    var material = new pc.StandardMaterial();
-                    material.diffuse.set(Math.random(), Math.random(), Math.random());
-                    material.opacity = this.opacity;
-                    material.blendType = pc.BLEND_NORMAL;
-                    material.update();
-
-                    var debugShape = new pc.Entity();
-
-                    var mesh;
-                    switch (collision.type) {
-                        case 'box':
-                            mesh = pc.createBox(this.app.graphicsDevice, {
-                                halfExtents: collision.halfExtents
-                            });
-                            debugShape._halfExents = collision.halfExtents.clone();
-                            break;
-                        case 'cone':
-                            mesh = pc.createCone(this.app.graphicsDevice, {
-                                height: collision.height,
-                                radius: collision.radius
-                            });
-                            debugShape._height = collision.height;
-                            debugShape._radius = collision.radius;
-                            debugShape._axis = collision.axis;
-                            break;
-                        case 'cylinder':
-                            mesh = pc.createCylinder(this.app.graphicsDevice, {
-                                height: collision.height,
-                                radius: collision.radius
-                            });
-                            debugShape._height = collision.height;
-                            debugShape._radius = collision.radius;
-                            debugShape._axis = collision.axis;
-                            break;
-                        case 'sphere':
-                            mesh = pc.createSphere(this.app.graphicsDevice, {
-                                radius: collision.radius
-                            });
-                            debugShape._radius = collision.radius;
-                            break;
-                        case 'capsule':
-                            mesh = pc.createCapsule(this.app.graphicsDevice, {
-                                height: collision.height,
-                                radius: collision.radius
-                            });
-                            debugShape._height = collision.height;
-                            debugShape._radius = collision.radius;
-                            debugShape._axis = collision.axis;
-                            break;
-                    }
-
-                    if (mesh) {
-                        debugShape.addComponent('model', {
-                            castShadows: this.castShadows,
-                            type: 'asset'
-                        });
-                        debugShape.model.model = this.createModel(mesh, material);
-                    }
-
-                    this.debugRoot.addChild(debugShape);
-
-                    // Cache collision component
-                    debugShape._collision = collision;
-                    debugShape._collisionType = collision.type;
-                    collision._debugShape = debugShape;
-                }
-
-                // Use the rigid body position if we have it
-                if (collision.entity.rigidbody) {
-                    var body = collision.entity.rigidbody.body;
-                    if (body) {
-                        var t = body.getWorldTransform();
-
-                        var p = t.getOrigin();
-                        var q = t.getRotation();
-                        collision._debugShape.setPosition(p.x(), p.y(), p.z());
-                        collision._debugShape.setRotation(q.x(), q.y(), q.z(), q.w());
-                    }
-                } else {
-                    collision._debugShape.setPosition(collision.entity.getPosition());
-                    collision._debugShape.setRotation(collision.entity.getRotation());
-                }
-
-                // If the shape is a cylinder or a capsule, rotate it so that it's axis is 
-                // taken into account
-                if (collision.type == 'cylinder' || collision.type == 'capsule' || collision.type == 'cone') {
-                    if (collision._debugShape._axis === 0) {
-                        // X
-                        collision._debugShape.rotateLocal(0, 0, -90);
-                    } else if (collision._debugShape._axis === 2) {
-                        // Z
-                        collision._debugShape.rotateLocal(90, 0, 0);
-                    }
-                }
-
-                collision._debugShape.updated = true;
-            }
-        }, this);
-    }
-
-    // If a debug shape was not updated this frame, the source collision component
-    // isn't around any more so we can delete it
-    this.debugRoot.children.forEach(function (child) {
-        if (!child.updated) {
-            delete child._collision._debugShape;
-            delete child._collision;
-            child.destroy();
+    constructor(opts = {}) {
+        if (!window.Ammo) {
+            console.warn('Warning! Trying to initialize Ammo Debug Drawer without Ammo lib in the project. Aborting.');
+            return;
         }
-    });
+
+        const app = pc.Application.getApplication();
+        const scene = app.scene;
+        const layers = scene.layers;
+        const self = this;
+
+
+        const drawLayer = opts.layer || layers.getLayerByName('Debug Draw') || layers.getLayerById(pc.LAYERID_UI);
+
+        const { entity, distance, ignorePartials } = opts.limit || {};
+
+        const pool = new AmmoDebugDrawer.Pool();
+
+        const v1 = new pc.Vec3();
+        const v2 = new pc.Vec3();
+        const v3 = new pc.Vec3();
+
+        let debugDrawMode = 1;
+        let enabled = false;
+
+
+        const drawer                = new Ammo.DebugDrawer();
+        drawer.drawLine             = drawLine.bind(this);
+        drawer.drawContactPoint     = drawContactPoint.bind(this);
+        drawer.reportErrorWarning   = reportErrorWarning.bind(this);
+        drawer.draw3dText           = draw3dText.bind(this);
+        drawer.setDebugMode         = setDebugMode.bind(this);
+        drawer.getDebugMode         = getDebugMode.bind(this);
+        drawer.enable               = enable.bind(this);
+        drawer.disable              = disable.bind(this);
+        drawer.update               = update.bind(this);
+
+        const world = app.systems.rigidbody.dynamicsWorld;
+        world.setDebugDrawer(drawer);
+
+
+        // ----------------------------------------------------------------
+
+
+        self.clear                  = clear;
+        self.toggle                 = toggle;
+        self.depthTest              = true;
+
+
+        // ----------------------------------------------------------------
+
+
+        function reportErrorWarning(warningString) {}
+
+        function draw3dText(location, textString) {}
+
+        function drawContactPoint(pointOnB, normalOnB, distance, lifeTime, color) {
+            const p = Ammo.wrapPointer(pointOnB, Ammo.btVector3);
+            const n = Ammo.wrapPointer(normalOnB, Ammo.btVector3);
+            const c = Ammo.wrapPointer(color, Ammo.btVector3);
+
+            const x = p.x();
+            const y = p.y();
+            const z = p.z();
+
+            pool.pushPos(x, y, z, x + n.x() * 0.5, y + n.y() * 0.5, z + n.z() * 0.5);
+            pool.pushColor(c.x(), c.y(), c.z(), 1, c.x(), c.y(), c.z(), 1);
+        }
+
+        function drawLine(from, to, color) {
+            const f = Ammo.wrapPointer(from, Ammo.btVector3);
+            const t = Ammo.wrapPointer(to, Ammo.btVector3);
+            const c = Ammo.wrapPointer(color, Ammo.btVector3);
+
+            if (entity) {
+                v1.set(f.x(), f.y(), f.z());
+                v2.set(t.x(), t.y(), t.z());
+
+                const pos = entity.getPosition();
+
+                const d1 = pos.distance(v1);
+                const d2 = pos.distance(v2);
+
+                if ((d1 < distance && d2 < distance) || (entity && !ignorePartials && (d1 < distance || d2 < distance))) {
+                    pool.pushPos(v1.x, v1.y, v1.z, v2.x, v2.y, v2.z);
+                    pool.pushColor(c.x(), c.y(), c.z(), 1, c.x(), c.y(), c.z(), 1);
+                }
+            } else {
+                pool.pushPos(f.x(), f.y(), f.z(), t.x(), t.y(), t.z());
+                pool.pushColor(c.x(), c.y(), c.z(), 1, c.x(), c.y(), c.z(), 1);
+            }
+        }
+
+        function clear() {
+            pool.clear();
+        }
+
+        function setDebugMode(val) {
+            debugDrawMode = val;
+        }
+
+        function getDebugMode() {
+            return debugDrawMode;
+        }
+
+        function enable() {
+            self.enabled = true;
+        }
+
+        function disable() {
+            self.enabled = false;
+        }
+
+        function toggle() {
+            self.enabled = !enabled;
+        }
+
+        function draw() {
+            try {
+                pool.entries.forEach(entry => {
+                    app.drawLineArrays(entry.positions, entry.colors, self.depthTest, drawLayer);
+                });
+            } catch (e) {
+                console.warn('Error drawing debug lines', e);
+                disable();
+            }
+        }
+
+        function update() {
+            if (enabled) world.debugDrawWorld();
+        }
+
+        function postUpdate() {
+            if (enabled) {
+                draw();
+                clear();
+            }
+        }
+
+
+        // ----------------------------------------------------------------
+
+
+        // Getters / Setters
+        Object.defineProperties(self, {
+            enabled: {
+                get: () => { return enabled; },
+                set: (val) => {
+                    enabled = val;
+                    if (enabled) {
+                        app.systems.on('update', update, self);
+                        app.systems.on('postUpdate', postUpdate, self);
+                    } else {
+                        app.systems.off('update', update, self);
+                        app.systems.off('postUpdate', postUpdate, self);
+                        clear();
+                    }
+                }
+            },
+
+            // 0: Disable
+            // 1: Wireframe
+            // 2: Bounding Boxes
+            // 3: Wireframe + AABB
+            // 8: Contact Points
+            mode: {
+                get: () => { return debugDrawMode; },
+                set: (val) => { debugDrawMode = val; }
+            }
+        });
+    }
+}
+
+AmmoDebugDrawer.Pool = class Pool {
+    constructor() {
+        const self          = this;
+
+        const pool          = new Map();
+        const MAX_SIZE      = 64000;
+
+        let index           = 0;
+
+        pool.set(index, { 'positions' : [], 'colors': [] });
+
+
+        self.entries        = pool;
+        self.clear          = clear;
+        self.pushColor      = pushColor;
+        self.pushPos        = pushPos;
+
+
+        _add(index);
+
+
+        function clear() {
+            pool.clear();
+            index = 0;
+            _add(index);
+        }
+
+        function pushColor(r1, g1, b1, a1, r2, g2, b2, a2) {
+            const entry = _getEntry('colors', 8);
+            entry.colors.push(r1, g1, b1, a1, r2, g2, b2, a2);
+        }
+
+        function pushPos(x1, y1, z1, x2, y2, z2) {
+            const entry = _getEntry('positions', 6);
+            entry.positions.push(x1, y1, z1, x2, y2, z2);
+        }
+
+        function _add(index) {
+            const entry = { positions: [], colors: [] };
+            pool.set(index, entry);
+            return entry;
+        }
+
+        function _getEntry(buffer, increment) {
+            let entry = pool.get(index);
+            if (entry[buffer].length + increment > MAX_SIZE) {
+                entry = _add(++index);
+            }
+            return entry;
+        }
+    }
 };
