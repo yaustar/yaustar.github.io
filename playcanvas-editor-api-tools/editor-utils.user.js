@@ -325,6 +325,22 @@
                 e.event.preventDefault();
                 e.event.stopPropagation();
             }
+
+        });
+
+        // Load any scripts in the Assets tagged as 'editor' and apply them to the scene when
+        // all the assets are loaded
+        editor.once('assets:load', () => {
+            const editorScriptAssets = editor.assets.listByTag('editor');
+            for (const asset of editorScriptAssets) {
+                if (asset.get('type') === 'script') {
+                    const url = asset.get('file').url;
+                    const name = asset.get('name');
+                    loadScriptAsync(url, () => {
+                        console.log('Loaded: ' + name);
+                    });
+                };
+            }
         });
 
         window.yauEditorTools = {
