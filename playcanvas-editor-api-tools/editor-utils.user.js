@@ -64,6 +64,18 @@
             });
         };
 
+        const getToolSettings = () => {
+            const toolSettings = JSON.parse(localStorage.getItem('yauEditorTools')) || {
+                approvedProjects : {}
+            };
+
+            return toolSettings;
+        };
+
+        const setToolSetttings = (settings) => {
+            localStorage.setItem('yauEditorTools', JSON.stringify(settings));
+        };
+
         let mousedownX = 0;
         let mousedownY = 0;
         let mousedownTimeStamp = 0;
@@ -185,18 +197,16 @@
 
                 // Check local storage if we already have permissions for this project
                 const projectId = config.project.id;
-                const toolSettings = JSON.parse(localStorage.getItem('yauEditorTools'));
+                const toolSettings = getToolSettings();
                 let askForPermission = true;
-                if (toolSettings) {
-                    const approvedProjects = toolSettings.approvedProjects;
-                    // If we have set a value for this project then we shouldn't need to ask for
-                    // permission
-                    if (approvedProjects[projectId] === true) {
-                        askForPermission = false;
-                        loadEditorScripts();
-                    } else if (approvedProjects[projectId] === false) {
-                        askForPermission = false;
-                    }
+                const approvedProjects = toolSettings.approvedProjects;
+                // If we have set a value for this project then we shouldn't need to ask for
+                // permission
+                if (approvedProjects[projectId] === true) {
+                    askForPermission = false;
+                    loadEditorScripts();
+                } else if (approvedProjects[projectId] === false) {
+                    askForPermission = false;
                 }
 
                 if (askForPermission) {
@@ -268,9 +278,9 @@
 
                         if (tickBox.value) {
                             const projectId = config.project.id;
-                            const toolSettings = localStorage.getItem('yauEditorTools') || { approvedProjects: {}};
+                            const toolSettings = getToolSettings();
                             toolSettings.approvedProjects[projectId] = loadScripts;
-                            localStorage.setItem('yauEditorTools', JSON.stringify(toolSettings));
+                            setToolSetttings(toolSettings);
                         }
                     }
 
