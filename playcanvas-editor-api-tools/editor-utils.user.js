@@ -12,14 +12,14 @@
 (function () {
     'use strict';
     const logCssStyle = 'color: white; background-color: #8e44ad';
+    let assetsLoaded = false;
+
     const onEngineLoaded = function () {
         console.log("%c yaustar's tools loaded v0.2 :) ", logCssStyle);
 
         const app = pc.Application.getApplication();
         let menu = null;
         const root = editor.call('layout.root');
-
-        const loadedGlbs = {};
 
         // check for wasm module support
         const wasmSupported = () => {
@@ -168,18 +168,123 @@
 
         // Load any scripts in the Assets tagged as 'editor' and apply them to the scene when
         // all the assets are loaded
-        editor.once('assets:load', () => {
+        const onAssetsLoaded = () => {
             const editorScriptAssets = editor.assets.listByTag('editor');
-            for (const asset of editorScriptAssets) {
-                if (asset.get('type') === 'script') {
-                    const url = asset.get('file').url;
-                    const name = asset.get('name');
-                    loadScriptAsync(url, () => {
-                        console.log('Loaded: ' + name);
+            if (editorScriptAssets.length > 0) {
+                const loadEditorScripts = function () {
+                    for (const asset of editorScriptAssets) {
+                        if (asset.get('type') === 'script') {
+                            const url = asset.get('file').url;
+                            const name = asset.get('name');
+                            loadScriptAsync(url, () => {
+                                console.log('Loaded: ' + name);
+                            });
+                        };
+                    }
+                }
+
+                // Check local storage if we already have permissions for this project
+                const projectId = config.project.id;
+                const toolSettings = JSON.parse(localStorage.getItem('yauEditorTools'));
+                let askForPermission = true;
+                if (toolSettings) {
+                    const approvedProjects = toolSettings.approvedProjects;
+                    // If we have set a value for this project then we shouldn't need to ask for
+                    // permission
+                    if (approvedProjects[projectId] === true) {
+                        askForPermission = false;
+                        loadEditorScripts();
+                    } else if (approvedProjects[projectId] === false) {
+                        askForPermission = false;
+                    }
+                }
+
+                if (askForPermission) {
+                    // Create a dialog box to ask for permissions to load the Editor scripts
+                    const text = 'Do you want to load the Editor Plugin scripts in this project?';
+
+                    const dialogBox = new pcui.Container({
+                        flexDirection: 'column',
+                        width: 300
                     });
-                };
+                    dialogBox.style.position = 'absolute';
+                    dialogBox.style.bottom = '10px';
+                    dialogBox.style.right = '10px';
+                    dialogBox.style.backgroundColor = '#364346';
+
+                    // label
+                    const label = new pcui.Label({
+                        text: text,
+                        width: 280
+                    });
+
+                    label.style.whiteSpace = 'normal';
+                    label.style.textAlign = 'left';
+
+                    const buttonContainer = new pcui.Container();
+                    buttonContainer.style.textAlign = 'right';
+
+                    const yesButton = new pcui.Button({
+                        text: 'Yes',
+                        width: 80
+                    });
+
+                    const noButton = new pcui.Button({
+                        text: 'NO',
+                        width: 80
+                    });
+
+                    noButton.style.backgroundColor = '#db5800';
+
+                    buttonContainer.append(yesButton);
+                    buttonContainer.append(noButton);
+
+                    const tickBoxContainer = new pcui.Container();
+                    tickBoxContainer.style.textAlign = 'right';
+                    const tickBox = new pcui.BooleanInput({
+                        value: false
+                    });
+
+                    const tickBoxLabel = new pcui.Label({
+                        text: 'Don\'t ask me again'
+                    });
+                    tickBoxLabel.style.verticalAlign = 'top';
+
+                    tickBoxContainer.append(tickBox);
+                    tickBoxContainer.append(tickBoxLabel);
+
+                    dialogBox.append(label);
+                    dialogBox.append(buttonContainer);
+                    dialogBox.append(tickBoxContainer);
+
+                    editor.call('layout.viewport').append(dialogBox);
+
+                    const onButtonClick = (loadScripts) => {
+                        if (loadScripts) {
+                            loadEditorScripts();
+                        }
+
+                        editor.call('layout.viewport').remove(dialogBox);
+
+                        if (tickBox.value) {
+                            const projectId = config.project.id;
+                            const toolSettings = localStorage.getItem('yauEditorTools') || { approvedProjects: {}};
+                            toolSettings.approvedProjects[projectId] = loadScripts;
+                            localStorage.setItem('yauEditorTools', JSON.stringify(toolSettings));
+                        }
+                    }
+
+                    yesButton.on('click', () => { onButtonClick(true); });
+                    noButton.on('click', () => { onButtonClick(false); });
+                }
             }
-        });
+        };
+
+        if (assetsLoaded) {
+            onAssetsLoaded();
+        } else {
+            editor.once('assets:load', () => { onAssetsLoaded(); });
+        }
 
         window.yauEditorTools = {
             loadScriptAsync: loadScriptAsync,
@@ -195,4 +300,6 @@
             clearInterval(intervalId);
         }
     }, 500);
+
+    editor.once('assets:load', () => { assetsLoaded = true; });
 })();
