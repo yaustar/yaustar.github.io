@@ -2,7 +2,7 @@
 
 ## Introduction
 
-These scripts are a toolset that allows you to use Editor Plugin scripts in the project that uses the [PlayCanvas Editor API][editor-api-github] for extra functionality.
+These scripts are a toolset that allows you to use Editor Plugin scripts in the project that uses the [PlayCanvas Editor API](https://github.com/playcanvas/editor-api) for extra functionality.
 
 This allows you to create and develop plugins directly in the PlayCanvas Editor.
 
