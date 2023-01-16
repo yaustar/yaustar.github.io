@@ -4,7 +4,7 @@
 // @version      0.1
 // @description  yaustar's Projected Skybox Editor Tool
 // @author       @yaustar
-// @match        https://playcanvas.com/editor/scene/*
+// @match        https://playcanvas.com/editor/*
 // @icon         https://www.google.com/s2/favicons?domain=playcanvas.com
 // @grant        none
 // ==/UserScript==

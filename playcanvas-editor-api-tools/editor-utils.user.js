@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         PlayCanvas Editor Uber Tools
 // @namespace    http://stevenyau.co.uk/
-// @version      0.1
+// @version      0.2
 // @description  yaustar's PlayCanvas Editor Uber Tools
 // @author       @yaustar
-// @match        https://playcanvas.com/editor/scene/*
+// @match        https://playcanvas.com/editor/*
 // @icon         https://www.google.com/s2/favicons?domain=playcanvas.com
 // @grant        none
 // ==/UserScript==
@@ -12,14 +12,14 @@
 (function () {
     'use strict';
     const logCssStyle = 'color: white; background-color: #8e44ad';
+    let assetsLoaded = false;
+
     const onEngineLoaded = function () {
-        console.log("%c yaustar's tools loaded :) ", logCssStyle);
+        console.log("%c yaustar's tools loaded v0.2 :) ", logCssStyle);
 
         const app = pc.Application.getApplication();
         let menu = null;
         const root = editor.call('layout.root');
-
-        const loadedGlbs = {};
 
         // check for wasm module support
         const wasmSupported = () => {
@@ -64,146 +64,16 @@
             });
         };
 
-        const checkForAndloadDracoWasm = (callback) => {
-            const wasmAsset = getDracoWasmAsset();
-
-            if (wasmAsset) {
-                const baseUrl = 'https://playcanvas.com';
-                const wasmUrl = baseUrl + wasmAsset.get('file').url;
-                const glueUrl = baseUrl + editor.assets.get(wasmAsset.get('data').glueScriptId).get('file').url;
-                const fallbackUrl = baseUrl + editor.assets.get(wasmAsset.get('data').fallbackScriptId).get('file').url;
-
-                if (wasmSupported()) {
-                    loadWasmModuleAsync(
-                        wasmAsset.get('data').moduleName,
-                        glueUrl,
-                        wasmUrl,
-                        callback
-                    );
-                } else {
-                    loadWasmModuleAsync(wasmAsset.get('data').moduleName, fallbackUrl, "", callback);
-                }
-            } else {
-                callback();
-            }
-        };
-
-        let dracoWasmAsset = undefined;
-
-        const getDracoWasmAsset = () => {
-            // Cache the result as we don't want to do this more than once
-            if (dracoWasmAsset !== undefined) {
-                return dracoWasmAsset;
-            }
-
-            console.log('Looking for Draco WASM in project');
-
-            const dracoModules = editor.assets.filter((asset) => { return asset.get('type') === 'wasm' && asset.get('data').moduleName === 'DracoDecoderModule' });
-            if (dracoModules.length > 0) {
-                dracoWasmAsset = dracoModules[0];
-            }
-
-            return dracoWasmAsset;
-        }
-
-        const loadGlbContainerFromAsset = (glbBinAsset, options, assetName, callback) => {
-            var onAssetReady = function (asset) {
-                var blob = new Blob([asset.resource]);
-                var data = URL.createObjectURL(blob);
-                return loadGlbContainerFromUrl(data, options, assetName, function (error, asset) {
-                    callback(error, asset);
-                    URL.revokeObjectURL(data);
-                });
-            }.bind(this);
-
-            glbBinAsset.ready(onAssetReady);
-            app.assets.load(glbBinAsset);
-        };
-
-        const loadGlbContainerFromUrl = (url, options, assetName, callback) => {
-            var filename = assetName + '.glb';
-            var file = {
-                url: url,
-                filename: filename
+        const getToolSettings = () => {
+            const toolSettings = JSON.parse(localStorage.getItem('yauEditorTools')) || {
+                approvedProjects : {}
             };
 
-            var asset = new pc.Asset(filename, 'container', file, null, options);
-            asset.once('load', function (containerAsset) {
-                if (callback) {
-                    callback(null, containerAsset);
-                }
-            });
-
-            app.assets.add(asset);
-            app.assets.load(asset);
-
-            return asset;
+            return toolSettings;
         };
 
-        const createGlbEntity = (editorEntity) => {
-            const scripts = editorEntity.get('components.script.scripts');
-            if (scripts && (scripts.loadGlbAsset || scripts.loadGlbUrl)) {
-                const guid = editorEntity.get('resource_id');
-                const viewEntity = app.root.findByGuid(guid);
-
-                // Check if a GLB entity has already been created
-                const alreadyLoaded = loadedGlbs[guid] != null;
-
-                if (alreadyLoaded) {
-                    console.log('Already loaded a GLB');
-                } else {
-                    if (scripts.loadGlbAsset) {
-                        const assetId = scripts.loadGlbAsset.attributes.glbAsset;
-                        if (assetId) {
-                            // Load the asset from the registry
-                            const asset = app.assets.get(assetId);
-                            loadGlbContainerFromAsset(asset, null, asset.name, function (err, asset) {
-                                if (err) {
-                                    console.error(err);
-                                    return;
-                                }
-
-                                const renderRootViewEntity = asset.resource.instantiateRenderEntity();
-                                renderRootViewEntity.reparent(viewEntity);
-
-                                loadedGlbs[guid] = renderRootViewEntity.getGuid();
-
-                                console.log('Loaded GLB: ' + asset.name);
-                            });
-                        }
-                    }
-
-                    if (scripts.loadGlbUrl) {
-                        const url = scripts.loadGlbUrl.attributes.glbUrl;
-                        if (url) {
-                            const filename = url.substring(url.lastIndexOf('/') + 1);
-                            loadGlbContainerFromUrl(url, null, filename, function (err, asset) {
-                                if (err) {
-                                    console.error(err);
-                                    return;
-                                }
-
-                                const renderRootViewEntity = asset.resource.instantiateRenderEntity();
-                                renderRootViewEntity.reparent(viewEntity);
-
-                                loadedGlbs[guid] = renderRootViewEntity.getGuid();
-
-                                console.log('Loaded GLB: ' + asset.name);
-                            });
-                        }
-                    }
-                }
-            }
-        }
-
-        const createGlbsAll = () => {
-            if (confirm('This can take a long time as we have to check every entity. Are you sure?')) {
-                const entities = editor.entities.list();
-                for (let i = 0; i < entities.length; i++) {
-                    const entity = entities[i];
-                    createGlbEntity(entity);
-                }
-            }
+        const setToolSetttings = (settings) => {
+            localStorage.setItem('yauEditorTools', JSON.stringify(settings));
         };
 
         let mousedownX = 0;
@@ -283,27 +153,7 @@
                             items: parentEntityItems
                         });
                     }
-
-                    if (scripts && (scripts.loadGlbAsset || scripts.loadGlbUrl)) {
-                        menuItems.push({
-                            text: '🏠 Load GLB on Entity',
-                            onSelect: () => {
-                                checkForAndloadDracoWasm(() => {
-                                    createGlbEntity(selectedEntity);
-                                });
-                            }
-                        });
-                    }
                 }
-
-                menuItems.push({
-                    text: '🏘 Load all GBLs ❗️',
-                    onSelect: () => {
-                        checkForAndloadDracoWasm(() => {
-                            createGlbsAll();
-                        });
-                    }
-                });
 
                 app.fire('editor:ubertools:beforeaddmenuitems', menuItems);
 
@@ -330,21 +180,126 @@
 
         // Load any scripts in the Assets tagged as 'editor' and apply them to the scene when
         // all the assets are loaded
-        editor.once('assets:load', () => {
+        const onAssetsLoaded = () => {
             const editorScriptAssets = editor.assets.listByTag('editor');
-            for (const asset of editorScriptAssets) {
-                if (asset.get('type') === 'script') {
-                    const url = asset.get('file').url;
-                    const name = asset.get('name');
-                    loadScriptAsync(url, () => {
-                        console.log('Loaded: ' + name);
+            if (editorScriptAssets.length > 0) {
+                const loadEditorScripts = function () {
+                    for (const asset of editorScriptAssets) {
+                        if (asset.get('type') === 'script') {
+                            const url = asset.get('file').url;
+                            const name = asset.get('name');
+                            loadScriptAsync(url, () => {
+                                console.log('Loaded: ' + name);
+                            });
+                        };
+                    }
+                }
+
+                // Check local storage if we already have permissions for this project
+                const projectId = config.project.id;
+                const toolSettings = getToolSettings();
+                let askForPermission = true;
+                const approvedProjects = toolSettings.approvedProjects;
+                // If we have set a value for this project then we shouldn't need to ask for
+                // permission
+                if (approvedProjects[projectId] === true) {
+                    askForPermission = false;
+                    loadEditorScripts();
+                } else if (approvedProjects[projectId] === false) {
+                    askForPermission = false;
+                }
+
+                if (askForPermission) {
+                    // Create a dialog box to ask for permissions to load the Editor scripts
+                    const text = 'Do you want to load the Editor Plugin scripts in this project?';
+
+                    const dialogBox = new pcui.Container({
+                        flexDirection: 'column',
+                        width: 300
                     });
-                };
+                    dialogBox.style.position = 'absolute';
+                    dialogBox.style.bottom = '10px';
+                    dialogBox.style.right = '10px';
+                    dialogBox.style.backgroundColor = '#364346';
+
+                    // label
+                    const label = new pcui.Label({
+                        text: text,
+                        width: 280
+                    });
+
+                    label.style.whiteSpace = 'normal';
+                    label.style.textAlign = 'left';
+
+                    const buttonContainer = new pcui.Container();
+                    buttonContainer.style.textAlign = 'right';
+
+                    const yesButton = new pcui.Button({
+                        text: 'Yes',
+                        width: 80
+                    });
+
+                    const noButton = new pcui.Button({
+                        text: 'NO',
+                        width: 80
+                    });
+
+                    noButton.style.backgroundColor = '#db5800';
+
+                    buttonContainer.append(yesButton);
+                    buttonContainer.append(noButton);
+
+                    const tickBoxContainer = new pcui.Container();
+                    tickBoxContainer.style.textAlign = 'right';
+                    const tickBox = new pcui.BooleanInput({
+                        value: false
+                    });
+
+                    const tickBoxLabel = new pcui.Label({
+                        text: 'Don\'t ask me again'
+                    });
+                    tickBoxLabel.style.verticalAlign = 'top';
+
+                    tickBoxContainer.append(tickBox);
+                    tickBoxContainer.append(tickBoxLabel);
+
+                    dialogBox.append(label);
+                    dialogBox.append(buttonContainer);
+                    dialogBox.append(tickBoxContainer);
+
+                    editor.call('layout.viewport').append(dialogBox);
+
+                    const onButtonClick = (loadScripts) => {
+                        if (loadScripts) {
+                            loadEditorScripts();
+                        }
+
+                        editor.call('layout.viewport').remove(dialogBox);
+
+                        if (tickBox.value) {
+                            const projectId = config.project.id;
+                            const toolSettings = getToolSettings();
+                            toolSettings.approvedProjects[projectId] = loadScripts;
+                            setToolSetttings(toolSettings);
+                        }
+                    }
+
+                    yesButton.on('click', () => { onButtonClick(true); });
+                    noButton.on('click', () => { onButtonClick(false); });
+                }
             }
-        });
+        };
+
+        if (assetsLoaded) {
+            onAssetsLoaded();
+        } else {
+            editor.once('assets:load', () => { onAssetsLoaded(); });
+        }
 
         window.yauEditorTools = {
-            loadScriptAsync: loadScriptAsync
+            loadScriptAsync: loadScriptAsync,
+            wasmSupported: wasmSupported,
+            loadWasmModuleAsync: loadWasmModuleAsync
         }
     };
 
@@ -355,4 +310,6 @@
             clearInterval(intervalId);
         }
     }, 500);
+
+    editor.once('assets:load', () => { assetsLoaded = true; });
 })();
