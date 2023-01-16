@@ -27,7 +27,7 @@ To write your own plugin:
 5. Refresh the Editor tab
 6. For security, when Editor Plugin scripts are found, we ask the user if they want to load them. 'Don't ask again' will store the setting in the browser's local storage under the key `yauEditorTools` and `approvedProjects` property.
 
-![](images/editor-plugins-example.mp4)
+https://user-images.githubusercontent.com/16639049/212740036-904c17c7-6a53-445d-b891-c0c088ae3baa.mp4
 
 Example Editor Plugin to generate boxes
 ```javascript
