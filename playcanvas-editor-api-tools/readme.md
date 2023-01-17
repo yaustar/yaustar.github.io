@@ -16,6 +16,7 @@ Assuming you are using Chrome:
 3. Optional scripts that can be added to Violent Monkey or be added to specific projects as Plugins:
     - https://yaustar.github.io/playcanvas-editor-api-tools/glb-utils.user.js ([Docs](#load-glb-for-selected-entity))
     - https://yaustar.github.io/playcanvas-editor-api-tools/projected-skybox.user.js ([Docs](#projected-skybox))
+    - https://yaustar.github.io/playcanvas-editor-api-tools/code-editor-utils.user.js (Adds Editor API type definitions in the Code Editor)
 4. Done!
 
 To write your own plugin:
