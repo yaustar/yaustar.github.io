@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="500" height="500">
+  <circle id="circle1" cx="50" cy="50" r="20" fill="red" onmouseover="evt.target.setAttribute('fill', 'blue');" onmouseout="evt.target.setAttribute('fill','red');"/>
+  <circle id="circle2" cx="150" cy="50" r="20" fill="green" onmouseover="evt.target.setAttribute('fill', 'blue');" onmouseout="evt.target.setAttribute('fill','green');"/>
+</svg>
