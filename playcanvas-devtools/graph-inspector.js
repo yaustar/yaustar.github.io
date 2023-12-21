@@ -112,8 +112,10 @@
 
         for (var i = 0; i < componentPropertyNames.length; ++ i) {
             var system = app.systems[componentPropertyNames[i]];
-            system.on('add', onComponentAddRemoval);
-            system.on('remove', onComponentAddRemoval);
+            if (system) {
+                system.on('add', onComponentAddRemoval);
+                system.on('remove', onComponentAddRemoval);
+            }
         }
 
         // Add an update loop
