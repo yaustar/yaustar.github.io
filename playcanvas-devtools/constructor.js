@@ -10,7 +10,7 @@ var __pcDevtoolsConstruct__ = function (baseUrl, app, window) {
                     scriptFilenames.push('libs/pcui.js');
                 }
 
-                if (!pc.MiniStats) {
+                if (!window.pcx) {
                     scriptFilenames.push('libs/playcanvas-extras.js');
                 }
 
@@ -195,7 +195,7 @@ var __pcDevtoolsConstruct__ = function (baseUrl, app, window) {
                     stopPropagatingInputEvents(pcGraphInspector.graphContainer.dom);
 
                     // Load the ministats
-                    var ministats = new pc.MiniStats(app);
+                    var ministats = new pcx.MiniStats(app);
 
                     // Load dat gui
                     datgui = new dat.GUI();
