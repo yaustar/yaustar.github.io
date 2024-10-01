@@ -164,7 +164,7 @@
 
         app.on('editor:ubertools:beforeaddmenuitems', (menuItems) => {
             const items = editor.selection.items;
-            if (items.length === 1 && items[0] instanceof api.Entity) {
+            if (items.length === 1 && items[0].viewportEntity !== undefined) {
                 const selectedEntity = items[0];
                 const scripts = selectedEntity.get('components.script.scripts');
 
