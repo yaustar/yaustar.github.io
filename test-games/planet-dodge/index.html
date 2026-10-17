@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Planet Dodge</title>
+    <style>
+      :root {
+        --inset-top: env(safe-area-inset-top, 0px);
+        --inset-right: env(safe-area-inset-right, 0px);
+        --inset-bottom: env(safe-area-inset-bottom, 0px);
+        --inset-left: env(safe-area-inset-left, 0px);
+      }
+
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #2c3e50;
+        touch-action: none;
+        overscroll-behavior: none;
+        font-family: system-ui, sans-serif;
+        color: #fff;
+      }
+
+      #app {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .hud {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        padding: var(--inset-top) var(--inset-right) var(--inset-bottom)
+          var(--inset-left);
+      }
+
+      .hud-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 12px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+      }
+
+      .hud-left,
+      .hud-right {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .hud-right {
+        align-items: flex-end;
+      }
+
+      #hud-run-medals {
+        font-size: 20px;
+        letter-spacing: 4px;
+        min-height: 24px;
+      }
+
+      #hud-frozen {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        opacity: 0.75;
+      }
+
+      #hud-frozen.paused {
+        opacity: 1;
+        color: #8cf;
+      }
+
+      #hud-dodge-pop {
+        position: fixed;
+        left: 50%;
+        top: 38%;
+        transform: translateX(-50%);
+        font-size: 28px;
+        font-weight: 800;
+        color: #ffd966;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+        animation: dodgePop 0.65s ease-out forwards;
+        pointer-events: none;
+      }
+
+      @keyframes dodgePop {
+        0% {
+          opacity: 0;
+          transform: translateX(-50%) translateY(12px) scale(0.6);
+        }
+        20% {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0) scale(1.1);
+        }
+        100% {
+          opacity: 0;
+          transform: translateX(-50%) translateY(-28px) scale(1);
+        }
+      }
+
+      .hud-center {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 24px;
+      }
+
+      .panel {
+        pointer-events: auto;
+        background: rgba(10, 10, 30, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 16px;
+        padding: 24px;
+        max-width: 320px;
+        width: 90%;
+      }
+
+      .panel h1 {
+        margin: 0 0 8px;
+        font-size: 22px;
+      }
+
+      .panel p {
+        margin: 0 0 16px;
+        opacity: 0.85;
+        line-height: 1.4;
+      }
+
+      .btn {
+        display: block;
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        background: #6cf;
+        color: #051018;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .medals {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        margin: 12px 0;
+        font-size: 28px;
+      }
+
+      .medal-pop {
+        animation: medalSlam 0.5s ease-out;
+      }
+
+      @keyframes medalSlam {
+        0% {
+          transform: scale(2.5);
+          opacity: 0;
+        }
+        70% {
+          transform: scale(0.9);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      #joystick {
+        position: fixed;
+        left: calc(var(--inset-left) + 24px);
+        bottom: calc(var(--inset-bottom) + 24px);
+        width: 120px;
+        height: 120px;
+        pointer-events: auto;
+        touch-action: none;
+      }
+
+      .joy-base {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.08);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+      }
+
+      .joy-stick {
+        position: absolute;
+        width: 48px;
+        height: 48px;
+        margin: -24px 0 0 -24px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.35);
+        left: 50%;
+        top: 50%;
+      }
+
+      #debug-toggle {
+        position: fixed;
+        top: calc(var(--inset-top) + 8px);
+        right: calc(var(--inset-right) + 8px);
+        pointer-events: auto;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+
+      #debug-panel {
+        display: none;
+        position: fixed;
+        bottom: calc(var(--inset-bottom) + 160px);
+        left: calc(var(--inset-left) + 16px);
+        right: calc(var(--inset-right) + 16px);
+        pointer-events: auto;
+        background: rgba(0, 0, 0, 0.85);
+        border-radius: 12px;
+        padding: 12px;
+        font-size: 12px;
+        max-height: 40vh;
+        overflow: auto;
+      }
+
+      #debug-panel.open {
+        display: block;
+      }
+
+      #debug-panel label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        gap: 8px;
+      }
+
+      #debug-panel input {
+        width: 80px;
+      }
+
+      #debug-panel input[type='checkbox'] {
+        width: auto;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* Dev only: simulate Snapchat top inset */
+      /* :root { --inset-top: 120px; } */
+    </style>
+    <script type="module" crossorigin src="./assets/index-CZFoOaFg.js"></script>
+  </head>
+  <body>
+    <canvas id="app"></canvas>
+    <div class="hud">
+      <div class="hud-top">
+        <div class="hud-left">
+          <span id="hud-planet">Rocky</span>
+          <span id="hud-run-medals" class="hidden"></span>
+          <span id="hud-frozen" class="hidden">Time frozen — move!</span>
+        </div>
+        <div class="hud-right">
+          <span id="hud-score">0</span>
+          <span id="hud-time"></span>
+        </div>
+      </div>
+      <span id="hud-dodge-pop" class="hidden">+25</span>
+      <div class="hud-center hidden" id="overlay">
+        <div class="panel" id="overlay-panel"></div>
+      </div>
+    </div>
+    <div id="joystick" class="hidden">
+      <div class="joy-base"><div class="joy-stick" id="joy-stick"></div></div>
+    </div>
+    <button type="button" id="debug-toggle" aria-label="Debug">Debug</button>
+    <div id="debug-panel"></div>
+  </body>
+</html>
