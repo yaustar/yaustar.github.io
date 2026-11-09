@@ -19,8 +19,8 @@
       body {
         margin: 0;
         height: 100%;
-        overflow: hidden;
-        background: #2c3e50;
+        overflow: clip;
+        background: #111111;
         touch-action: none;
         overscroll-behavior: none;
         font-family: system-ui, sans-serif;
@@ -62,13 +62,154 @@
         align-items: flex-end;
       }
 
+      .hud-score-wrap {
+        position: absolute;
+        left: 50%;
+        top: calc(var(--inset-top) + 8px);
+        transform: translateX(-50%);
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        pointer-events: none;
+        transition: transform 0.45s ease-out;
+      }
+
+      .hud-score-wrap.is-off {
+        transform: translate(-50%, calc(-100% - var(--inset-top) - 16px));
+      }
+
+      #hud-planet,
+      #hud-boing,
+      #hud-sparkle {
+        display: none;
+      }
+
+      .hud-score-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        opacity: 0.75;
+      }
+
+      #hud-score {
+        font-size: 40px;
+        font-weight: 800;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+      }
+
+      #hud-score.bump {
+        animation: scoreBump 0.32s ease-out;
+      }
+
+      @keyframes scoreBump {
+        0% { transform: scale(1); }
+        40% { transform: scale(1.28); }
+        70% { transform: scale(0.92); }
+        100% { transform: scale(1); }
+      }
+
+      #hud-count[hidden] {
+        display: none !important;
+      }
+
+      .hud-score-wrap #hud-time {
+        margin-top: 4px;
+        font-size: 14px;
+        font-weight: 700;
+        opacity: 0.9;
+      }
+
+      #hud-time[hidden] {
+        display: none !important;
+      }
+
+      #hud-count {
+        margin-top: 2px;
+        font-size: min(28vw, 140px);
+        font-weight: 800;
+        line-height: 1;
+        color: #e74c3c;
+        font-variant-numeric: tabular-nums;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+        pointer-events: none;
+      }
+
+      #hud-count.pop {
+        animation: countPop 0.35s ease-out;
+      }
+
+      #speech {
+        position: fixed;
+        z-index: 5;
+        width: max-content;
+        max-width: none;
+        margin: 0;
+        padding: 8px 12px 10px;
+        background: #fff;
+        color: #111;
+        border: 3px solid #111;
+        border-radius: 16px;
+        font-size: 15px;
+        font-weight: 800;
+        line-height: 1.15;
+        letter-spacing: 0.03em;
+        text-align: center;
+        text-transform: uppercase;
+        text-size-adjust: none;
+        white-space: pre;
+        pointer-events: none;
+        transform-origin: center bottom;
+      }
+
+      #speech[hidden] {
+        display: none !important;
+      }
+
+      #speech p {
+        margin: 0;
+      }
+
+      #speech::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: -11px;
+        margin-left: -9px;
+        border-width: 12px 9px 0;
+        border-style: solid;
+        border-color: #111 transparent transparent;
+      }
+
+      #speech::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: -7px;
+        z-index: 1;
+        margin-left: -6px;
+        border-width: 9px 6px 0;
+        border-style: solid;
+        border-color: #fff transparent transparent;
+      }
+
+      @keyframes countPop {
+        0% { transform: scale(1.35); }
+        100% { transform: scale(1); }
+      }
+
       #hud-run-medals {
         font-size: 20px;
         letter-spacing: 4px;
         min-height: 24px;
       }
 
-      #hud-frozen {
+      #hud-frozen,
+      #hud-boing,
+      #hud-sparkle {
         font-size: 11px;
         font-weight: 700;
         letter-spacing: 0.06em;
@@ -112,6 +253,7 @@
       .hud-center {
         position: absolute;
         inset: 0;
+        top: var(--inset-top);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -153,12 +295,158 @@
         cursor: pointer;
       }
 
-      .medals {
+      .board {
+        width: 100%;
+        margin: 0 0 14px;
+        border-collapse: collapse;
+        font-size: 14px;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .board td {
+        padding: 2px 0;
+      }
+
+      .board td:first-child {
+        width: 1.6em;
+        padding-right: 8px;
+        text-align: right;
+        opacity: 0.55;
+      }
+
+      .board td:nth-child(2) {
+        text-align: left;
+      }
+
+      .board td:last-child {
+        text-align: right;
+        font-weight: 700;
+      }
+
+      .board tr.you td {
+        color: #ffd966;
+      }
+
+      .hud-center.is-title {
+        align-items: stretch;
+        padding: 8px 20px calc(var(--inset-bottom) + 28px);
+      }
+
+      .is-title .panel {
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        max-width: none;
+        width: 100%;
+        height: 100%;
         display: flex;
-        gap: 8px;
-        justify-content: center;
-        margin: 12px 0;
-        font-size: 28px;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .logo-slot {
+        margin-top: calc(6vh + 20px);
+        width: min(100%, 390px);
+        min-height: 177px;
+        box-sizing: border-box;
+        border: 2px dashed rgba(255, 255, 255, 0.55);
+        display: grid;
+        place-items: center;
+        font-size: 51px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        line-height: 0.95;
+        text-transform: uppercase;
+      }
+
+      .btn-play {
+        width: auto;
+        margin-top: 7vh;
+        padding: 16px 32px;
+        border-radius: 14px;
+        background: #3498db;
+        color: #fff;
+        border: 5px solid #fff;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.45);
+        font-size: 33px;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        animation: playJiggle 1.2s ease-in-out infinite;
+      }
+
+      @keyframes playJiggle {
+        0%,
+        100% {
+          transform: scale(1) rotate(0deg);
+        }
+        30% {
+          transform: scale(1.08) rotate(-5deg);
+        }
+        70% {
+          transform: scale(1.08) rotate(5deg);
+        }
+      }
+
+      .podium {
+        list-style: none;
+        margin: auto 0 0;
+        padding: 0;
+        width: min(92vw, 340px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .podium li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 8px;
+        padding: 8px 12px;
+        border-radius: 8px;
+        color: #2c3e50;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        box-sizing: border-box;
+      }
+
+      .podium .who {
+        flex: 1;
+        text-align: left;
+        text-transform: uppercase;
+      }
+
+      .podium .pts {
+        font-variant-numeric: tabular-nums;
+      }
+
+      .podium-gold {
+        width: 100%;
+        background: #f1c40f;
+        font-size: 22px;
+        padding: 12px 16px;
+      }
+
+      .podium-silver {
+        width: 100%;
+        background: #ecf0f1;
+        font-size: 18px;
+        padding: 10px 16px;
+      }
+
+      .podium-bronze {
+        width: 100%;
+        background: #c4843c;
+        font-size: 15px;
+        padding: 8px 16px;
+      }
+
+      .cup {
+        width: 22px;
+        height: 1em;
+        flex: none;
       }
 
       .medal-pop {
@@ -181,12 +469,17 @@
 
       #joystick {
         position: fixed;
-        left: calc(var(--inset-left) + 24px);
-        bottom: calc(var(--inset-bottom) + 24px);
+        left: 0;
+        top: 0;
         width: 120px;
         height: 120px;
-        pointer-events: auto;
+        z-index: 4;
+        pointer-events: none;
         touch-action: none;
+      }
+
+      #joystick.is-idle {
+        visibility: hidden;
       }
 
       .joy-base {
@@ -256,14 +549,34 @@
         width: auto;
       }
 
+      #debug-panel select {
+        width: 100px;
+        font: inherit;
+      }
+
+      #debug-panel button {
+        display: block;
+        width: 100%;
+        margin-top: 4px;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        background: #ecf0f1;
+        color: #2c3e50;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
       .hidden {
         display: none !important;
       }
 
-      /* Dev only: simulate Snapchat top inset */
-      /* :root { --inset-top: 120px; } */
+      /* Dev only: simulate Snapchat's controls over the top of the screen. */
+      :root {
+        --inset-top: 120px;
+      }
     </style>
-    <script type="module" crossorigin src="./assets/index-CZFoOaFg.js"></script>
+    <script type="module" crossorigin src="./assets/index-BsbY49jo.js"></script>
   </head>
   <body>
     <canvas id="app"></canvas>
@@ -271,14 +584,19 @@
       <div class="hud-top">
         <div class="hud-left">
           <span id="hud-planet">Rocky</span>
+          <span id="hud-boing">Squash</span>
+          <span id="hud-sparkle">Halo</span>
           <span id="hud-run-medals" class="hidden"></span>
           <span id="hud-frozen" class="hidden">Time frozen — move!</span>
         </div>
-        <div class="hud-right">
-          <span id="hud-score">0</span>
-          <span id="hud-time"></span>
-        </div>
       </div>
+      <div class="hud-score-wrap is-off">
+        <span class="hud-score-label">Score</span>
+        <span id="hud-score">0</span>
+        <span id="hud-time" hidden></span>
+        <span id="hud-count" hidden></span>
+      </div>
+      <div id="speech" hidden><p></p></div>
       <span id="hud-dodge-pop" class="hidden">+25</span>
       <div class="hud-center hidden" id="overlay">
         <div class="panel" id="overlay-panel"></div>
